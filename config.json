@@ -1,0 +1,51 @@
+{
+  "database": {
+    "type": "sqlite",
+    "path": "D:/InEx_System_Item/InEx_System v2.0_26041800/data/inex.db",
+    "auto_backup": true,
+    "backup_interval": 1,
+    "active_connection": null,
+    "connections": {},
+    "backup_path": "./backup/",
+    "host": "localhost",
+    "port": "3306",
+    "user": "dba",
+    "password": "sql",
+    "database": ""
+  },
+  "system": {
+    "company_name": "个人收支管理系统",
+    "version": "2.0",
+    "author": "滕宇豪",
+    "student_id": "0457",
+    "class": "大数据与财务管理 03 班"
+  },
+  "ui": {
+    "theme": "default",
+    "font_size": 10,
+    "window_width": 1600,
+    "window_height": 900,
+    "last_expense_payment_method": "01",
+    "last_expense_type": "02",
+    "last_income_payment_method": "全部",
+    "last_income_type": "全部"
+  },
+  "log": {
+    "level": "ERROR",
+    "path": "./logs/"
+  },
+  "api": {},
+  "ai": {
+    "api_key_encrypted": "gAAAAABp6FO89GWwe5UZYWqOuMoF0JRf-JU3RTbsYZkBUMRjtuOEZ6e4ONfS2CPU5hFSLVM_6o6z8eRUfA_PtMIFM5Ae1th7JrylEi9LPEnmoqmWKAryuiOzkq87Camjc1pCPar9ZfJm",
+    "model": "deepseek-chat",
+    "temperature": 0.9
+  },
+  "last_income_payment_method": "全部",
+  "last_income_type": "全部",
+  "last_expense_payment_method": "全部",
+  "last_expense_type": "全部",
+  "login": {
+    "account_encrypted": "gAAAAABp9qII-0swtElfeVTTQ55M2AmBJtSSHuXcoN6iiM7UcyDfD1RKkgDG9FKFEpsvLyfCuT4YzVKBmcRzBK8ZMzBryQzB0w==",
+    "password_hash": "$2b$12$qpVCFc1hRtgp8V.BYT5jM./IekYYbTjbSUJ6VKunZpY6/7BX1pmvK"
+  }
+}
