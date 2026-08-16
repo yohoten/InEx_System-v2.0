@@ -35,10 +35,14 @@ logs/
 
 # Database
 *.db
+*.db-shm
+*.db-wal
 *.sqlite
 *.sqlite3
 data/*.db
 data/*.sqlite
+data/*.db-shm
+data/*.db-wal
 
 # Backup
 backup/
