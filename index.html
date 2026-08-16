@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InEx_System v2.0 — 收支管理系统 串讲演示</title>
+<style>
+/* ========== RESET & BASE ========== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+@font-face{font-family:'Mono';src:local('Cascadia Code'),local('Consolas'),local('monospace')}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Microsoft YaHei','PingFang SC','Segoe UI','Helvetica Neue',sans-serif;background:#0b0914;color:#e0dfe8;-webkit-font-smoothing:antialiased}
+.slide-container{width:100%;height:100%;position:relative}
+
+/* ========== SLIDE BASE ========== */
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(0.96);filter:blur(4px);transition:all .5s cubic-bezier(.22,1,.36,1);pointer-events:none;padding:50px 70px}
+.slide.active{opacity:1;transform:scale(1);filter:blur(0);pointer-events:auto;z-index:10}
+.slide-content{width:100%;max-width:1140px;max-height:86vh;overflow-y:auto;position:relative;z-index:2}
+
+/* ========== SCROLLBAR ========== */
+.slide-content::-webkit-scrollbar{width:4px}
+.slide-content::-webkit-scrollbar-track{background:transparent}
+.slide-content::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:4px}
+.slide-content::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.25)}
+
+/* ========== COVER & SECTION SLIDES ========== */
+.cover-slide,.section-slide{background:#0b0914;color:#fff;text-align:center;overflow:hidden}
+.cover-slide::before,.section-slide::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(102,126,234,.12) 0%,transparent 70%),radial-gradient(ellipse 60% 50% at 80% 80%,rgba(139,92,246,.08) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 20% 20%,rgba(16,185,129,.05) 0%,transparent 70%);pointer-events:none;z-index:1}
+
+/* Grid dots pattern */
+.cover-slide::after,.section-slide::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0}
+
+.cover-slide .cover-badge{display:inline-block;padding:10px 32px;border:1.5px solid rgba(255,255,255,.2);border-radius:40px;font-size:15px;letter-spacing:5px;margin-bottom:36px;color:rgba(255,255,255,.7);backdrop-filter:blur(8px);background:rgba(255,255,255,.03);position:relative;z-index:2}
+.cover-slide h1{font-size:68px;font-weight:900;background:linear-gradient(135deg,#a78bfa 0%,#818cf8 30%,#60a5fa 60%,#34d399 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:18px;letter-spacing:3px;position:relative;z-index:2;filter:drop-shadow(0 0 40px rgba(139,92,246,.3))}
+.cover-slide .subtitle{font-size:28px;font-weight:300;color:rgba(255,255,255,.6);margin-bottom:44px;position:relative;z-index:2;letter-spacing:1px}
+.cover-slide .meta{font-size:17px;color:rgba(255,255,255,.45);line-height:2.2;position:relative;z-index:2}
+.cover-slide .meta span{padding:0 20px;border-right:1px solid rgba(255,255,255,.12)}
+.cover-slide .meta span:last-child{border-right:none}
+
+.section-slide .section-num{font-size:140px;font-weight:900;opacity:.04;position:absolute;top:40px;left:50%;transform:translateX(-50%);z-index:0;font-family:'Mono',monospace}
+.section-slide h2{font-size:46px;font-weight:800;margin-bottom:22px;position:relative;z-index:2;letter-spacing:1px}
+.section-slide .section-desc{font-size:20px;font-weight:300;color:rgba(255,255,255,.5);position:relative;z-index:2;line-height:2}
+
+/* ========== CONTENT SLIDES ========== */
+.content-slide{background:linear-gradient(180deg,#0f0d1a 0%,#131022 100%);overflow:hidden}
+.content-slide::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:radial-gradient(rgba(255,255,255,.015) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+
+.content-slide h2{font-size:33px;font-weight:800;color:#f0edf6;margin-bottom:28px;padding-bottom:16px;border-bottom:2px solid rgba(102,126,234,.3);display:inline-block;letter-spacing:.5px;position:relative}
+.content-slide h2::after{content:'';position:absolute;bottom:-2px;left:0;width:50%;height:2px;background:linear-gradient(90deg,#667eea,transparent)}
+.content-slide h3{font-size:19px;font-weight:700;color:#c4b5fd;margin:18px 0 10px;letter-spacing:.3px}
+
+/* ========== CARDS ========== */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-top:18px}
+.card{background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.01) 100%);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:30px 24px;transition:all .35s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden;backdrop-filter:blur(8px)}
+.card::before{content:'';position:absolute;top:0;left:0;width:4px;height:40px;border-radius:0 0 4px 0;transition:all .35s}
+.card:hover{transform:translateY(-6px);border-color:rgba(255,255,255,.1);box-shadow:0 20px 50px rgba(0,0,0,.3),0 0 0 1px rgba(255,255,255,.03) inset}
+.card:hover::before{height:100%;width:4px;border-radius:0}
+.card .card-icon{font-size:34px;margin-bottom:14px;display:block;filter:grayscale(0);transition:transform .35s}
+.card:hover .card-icon{transform:scale(1.15)}
+.card .card-title{font-size:18px;font-weight:700;color:#f0edf6;margin-bottom:10px;letter-spacing:.3px}
+.card .card-desc{font-size:14px;color:#8b85a5;line-height:1.75}
+.card.purple::before{background:linear-gradient(180deg,#a78bfa,#8b5cf6)}.card.purple .card-icon{text-shadow:0 0 20px rgba(167,139,250,.3)}
+.card.green::before{background:linear-gradient(180deg,#34d399,#10b981)}.card.green .card-icon{text-shadow:0 0 20px rgba(52,211,153,.3)}
+.card.orange::before{background:linear-gradient(180deg,#fbbf24,#f59e0b)}.card.orange .card-icon{text-shadow:0 0 20px rgba(251,191,36,.3)}
+.card.red::before{background:linear-gradient(180deg,#f87171,#ef4444)}.card.red .card-icon{text-shadow:0 0 20px rgba(248,113,113,.3)}
+.card.blue::before{background:linear-gradient(180deg,#60a5fa,#3b82f6)}.card.blue .card-icon{text-shadow:0 0 20px rgba(96,165,250,.3)}
+.card.cyan::before{background:linear-gradient(180deg,#22d3ee,#06b6d4)}.card.cyan .card-icon{text-shadow:0 0 20px rgba(34,211,238,.3)}
+
+/* ========== FEATURE LIST ========== */
+.feature-list{list-style:none;padding:0}
+.feature-list li{display:flex;align-items:flex-start;gap:14px;padding:13px 18px;margin:6px 0;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:12px;font-size:15px;color:#c4bfd9;line-height:1.6;transition:all .25s}
+.feature-list li:hover{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)}
+.feature-list li .li-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+
+/* ========== TWO COLUMN ========== */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+
+/* ========== HIGHLIGHT BOX ========== */
+.highlight{background:linear-gradient(135deg,rgba(102,126,234,.06),rgba(139,92,246,.04));border:1px solid rgba(102,126,234,.12);border-radius:16px;padding:26px 30px;margin:18px 0;border-left:3px solid #667eea;position:relative;overflow:hidden}
+.highlight::after{content:'';position:absolute;top:-50%;right:-50%;width:200px;height:200px;background:radial-gradient(circle,rgba(102,126,234,.06) 0%,transparent 70%);pointer-events:none}
+.highlight p{font-size:15px;line-height:1.9;color:#a8a3c5;position:relative;z-index:1}
+.highlight h3{margin-top:0!important}
+
+/* ========== TECH TAGS ========== */
+.tech-tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.tech-tag{padding:7px 18px;border-radius:22px;font-size:13px;font-weight:600;letter-spacing:.3px;border:1px solid rgba(255,255,255,.1);transition:all .25s;cursor:default}
+.tech-tag:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.tech-tag{background:rgba(102,126,234,.15);color:#a5b4fc;border-color:rgba(102,126,234,.2)}
+.tech-tag.green{background:rgba(16,185,129,.15);color:#6ee7b7;border-color:rgba(16,185,129,.2)}
+.tech-tag.orange{background:rgba(245,158,11,.15);color:#fcd34d;border-color:rgba(245,158,11,.2)}
+.tech-tag.purple{background:rgba(139,92,246,.15);color:#c4b5fd;border-color:rgba(139,92,246,.2)}
+.tech-tag.red{background:rgba(239,68,68,.15);color:#fca5a5;border-color:rgba(239,68,68,.2)}
+
+/* ========== ARCHITECTURE STACK ========== */
+.arch-stack{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+.arch-layer{display:flex;align-items:center;gap:20px;padding:18px 28px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:14px;transition:all .3s}
+.arch-layer:hover{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)}
+.arch-layer .layer-label{font-size:13px;font-weight:700;color:#fff;padding:8px 20px;border-radius:8px;white-space:nowrap;min-width:90px;text-align:center;letter-spacing:.5px;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.arch-layer .layer-content{font-size:15px;color:#a8a3c5;line-height:1.6}
+
+/* ========== DB CARDS ========== */
+.db-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:20px}
+.db-card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:18px;padding:32px 24px;text-align:center;transition:all .35s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden}
+.db-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;transition:all .35s}
+.db-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,.3);border-color:rgba(255,255,255,.1)}
+.db-card:hover::before{height:6px}
+.db-card:nth-child(1)::before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+.db-card:nth-child(2)::before{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.db-card:nth-child(3)::before{background:linear-gradient(90deg,#ef4444,#f87171)}
+.db-card .db-icon{font-size:42px;margin-bottom:14px;display:block}
+.db-card .db-name{font-size:20px;font-weight:700;color:#f0edf6;margin-bottom:10px}
+.db-card .db-features{font-size:13px;color:#8b85a5;line-height:2}
+
+/* ========== FLOW STEPS ========== */
+.flow-steps{display:flex;justify-content:space-between;align-items:flex-start;margin:24px 0;gap:6px}
+.flow-step{flex:1;text-align:center;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:16px;padding:24px 14px;transition:all .3s;position:relative}
+.flow-step:hover{background:rgba(255,255,255,.04);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.2)}
+.flow-step .step-num{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#667eea,#8b5cf6);color:#fff;font-size:18px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 8px 24px rgba(102,126,234,.3)}
+.flow-step .step-title{font-size:16px;font-weight:700;color:#f0edf6;margin-bottom:8px}
+.flow-step .step-desc{font-size:13px;color:#8b85a5;line-height:1.7}
+.flow-arrow{font-size:26px;color:rgba(102,126,234,.4);align-self:center;flex-shrink:0;font-weight:bold}
+
+/* ========== STATS ========== */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:20px 0}
+.stat-box{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:14px;padding:22px;text-align:center;transition:all .3s}
+.stat-box:hover{background:rgba(255,255,255,.04);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.stat-box .stat-val{font-size:30px;font-weight:800;margin:8px 0;font-family:'Mono',monospace;letter-spacing:-1px}
+.stat-box .stat-label{font-size:13px;color:#8b85a5;letter-spacing:.5px}
+
+/* ========== TABLE ========== */
+.data-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.data-table th{background:rgba(102,126,234,.1);padding:14px 18px;text-align:left;font-weight:700;color:#c4b5fd;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px;letter-spacing:.5px}
+.data-table td{padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.03);color:#a8a3c5}
+.data-table tr{transition:all .2s}
+.data-table tbody tr:hover{background:rgba(255,255,255,.02)}
+
+/* ========== NAV BAR ========== */
+.nav{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;z-index:100;background:rgba(15,13,26,.85);padding:10px 22px;border-radius:44px;backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.nav button{width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#c4bfd9;cursor:pointer;font-size:17px;transition:all .25s;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.nav button:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.2);color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.nav button:active{transform:scale(.92)}
+.nav .page-indicator{color:#c4bfd9;font-size:13px;min-width:80px;text-align:center;font-weight:600;letter-spacing:.5px;font-family:'Mono',monospace}
+.nav .dots-row{display:flex;gap:8px;margin-left:6px}
+.nav .dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.15);transition:all .35s;cursor:pointer}
+.nav .dot:hover{background:rgba(255,255,255,.3)}
+.nav .dot.active{background:#818cf8;width:26px;border-radius:4px;box-shadow:0 0 12px rgba(129,140,248,.4)}
+
+/* ========== PROGRESS BAR ========== */
+.progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#667eea,#8b5cf6,#a78bfa,#34d399);z-index:101;transition:width .5s cubic-bezier(.22,1,.36,1);box-shadow:0 0 12px rgba(102,126,234,.4)}
+
+/* ========== TIMER ========== */
+.timer{position:fixed;top:18px;right:28px;z-index:102;background:rgba(15,13,26,.8);color:#a78bfa;padding:8px 18px;border-radius:22px;font-size:13px;backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.06);font-family:'Mono',monospace;letter-spacing:1px;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+
+/* ========== KEY HINT ========== */
+.key-hint{position:fixed;bottom:94px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.25);font-size:11px;z-index:99;letter-spacing:1px}
+
+/* ========== STATUS DOTS ========== */
+.status-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;box-shadow:0 0 8px currentColor}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:960px){
+  .two-col,.db-cards{grid-template-columns:1fr}
+  .flow-steps{flex-direction:column}
+  .flow-arrow{transform:rotate(90deg)}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .slide{padding:30px 20px}
+  .cover-slide h1{font-size:38px}
+  .section-slide h2{font-size:32px}
+  .content-slide h2{font-size:24px}
+  .nav{padding:8px 16px;gap:8px}
+  .nav .dots-row{display:none}
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+.slide.active .card,.slide.active .stat-box,.slide.active .arch-layer,.slide.active .db-card,.slide.active .flow-step{animation:fadeInUp .6s cubic-bezier(.22,1,.36,1) both}
+.slide.active .card:nth-child(1),.slide.active .stat-box:nth-child(1){animation-delay:.05s}
+.slide.active .card:nth-child(2),.slide.active .stat-box:nth-child(2){animation-delay:.12s}
+.slide.active .card:nth-child(3),.slide.active .stat-box:nth-child(3){animation-delay:.19s}
+.slide.active .card:nth-child(4),.slide.active .stat-box:nth-child(4){animation-delay:.26s}
+.slide.active .card:nth-child(5){animation-delay:.33s}
+.slide.active .card:nth-child(6){animation-delay:.4s}
+
+/* Pulse dot on timer */
+.timer::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:#34d399;margin-right:8px;animation:pulse 2s ease-in-out infinite;box-shadow:0 0 8px rgba(52,211,153,.5)}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="timer" id="timer">00:00</div>
+
+<div class="slide-container" id="slides">
+
+<!-- ====== SLIDE 0: 封面 ====== -->
+<div class="slide cover-slide active" data-slide="0">
+<div class="slide-content">
+<div class="cover-badge">「 数智经管 · 创见未来 」创意作品设计大赛</div>
+<h1>InEx_System v2.0</h1>
+<div class="subtitle">个人收支管理系统</div>
+<div class="meta">
+</div>
+</div>
+</div>
+
+<!-- ====== SLIDE 1: 目录 ====== -->
+<div class="slide section-slide" data-slide="1">
+<div class="slide-content">
+<div class="section-num">01</div>
+<h2>作品演示</h2>
+<div class="section-desc" style="margin-top:48px;line-height:3;font-size:21px">
+项目介绍 → 技术架构与多数据库支持 → 核心功能与数据分析<br>
+ → AI分析与预算预警 → 总结展望
+</div>
+</div>
+</div>
+
+<!-- ====== SLIDE 2: 项目背景 ====== -->
+<div class="slide content-slide" data-slide="2">
+<div class="slide-content">
+<h2>项目背景与痛点</h2>
+<div class="two-col" style="margin-top:18px">
+<div>
+<h3>现状痛点</h3>
+<ul class="feature-list">
+<li><span class="li-icon"></span>个人及小商户收支记录零散，Excel 管理效率低、易出错</li>
+<li><span class="li-icon"></span>缺乏直观的数据可视化工具，难以发现消费规律</li>
+<li><span class="li-icon"></span>市面记账软件要么功能单一（仅记录），要么过于复杂（财务ERP）</li>
+<li><span class="li-icon"></span>数据隐私与本地化存储需求被普遍忽视</li>
+<li><span class="li-icon"></span>缺少智能化消费分析建议，用户难以优化财务结构</li>
+</ul>
+</div>
+<div>
+<h3>我们的方案</h3>
+<div class="highlight">
+<p><b>InEx_System</b> —— 基于 PyQt5 构建的跨数据库桌面端收支管理系统，集<b>记账、分析、AI 建议</b>于一体，以"专业财务内核 + 智能分析外脑 + 极简操作体验"三位一体，兼顾易用性与企业级能力。</p>
+</div>
+<div class="stats-row" style="margin-top:18px">
+<div class="stat-box"><div class="stat-val" style="color:#818cf8">3</div><div class="stat-label">数据库引擎</div></div>
+<div class="stat-box"><div class="stat-val" style="color:#34d399">9</div><div class="stat-label">功能模块</div></div>
+<div class="stat-box"><div class="stat-val" style="color:#fbbf24">5</div><div class="stat-label">导出格式</div></div>
+<div class="stat-box"><div class="stat-val" style="color:#a78bfa">AI</div><div class="stat-label">智能分析</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ====== SLIDE 3: 技术架构 ====== -->
+<div class="slide content-slide" data-slide="3">
+<div class="slide-content">
+<h2>技术架构总览</h2>
+<div class="arch-stack">
+<div class="arch-layer">
+<span class="layer-label" style="background:linear-gradient(135deg,#a78bfa,#8b5cf6)">表现层</span>
+<span class="layer-content"><b>PyQt5 GUI</b> — 主窗口框架 + QStackedWidget 页面路由 + 侧边栏导航 + 完整菜单栏体系 + QSplashScreen 启动画面 + Toast 消息组件</span>
+</div>
+<div class="arch-layer">
+<span class="layer-label" style="background:linear-gradient(135deg,#818cf8,#667eea)">业务层</span>
+<span class="layer-content"><b>Python 3.7+</b> — EnhancedDataManager 数据总控 / 收支 CRUD / 流水账引擎 / 月报生成器 / BudgetManager 预算管理 / SpendingAnalyzer AI 分析器</span>
+</div>
+<div class="arch-layer">
+<span class="layer-label" style="background:linear-gradient(135deg,#60a5fa,#3b82f6)">数据层</span>
+<span class="layer-content"><b>DatabaseBackend 抽象层 (策略模式)</b> — SQLite 零配置直连 | MySQL 8.0 + DBUtils 连接池 | Sybase ASA 9 (DSN / DSN-less / 文件直连)</span>
+</div>
+<div class="arch-layer">
+<span class="layer-label" style="background:linear-gradient(135deg,#34d399,#10b981)">工具层</span>
+<span class="layer-content"><b>15+ 核心依赖</b> — pandas · numpy · matplotlib · seaborn · scipy · reportlab · openpyxl · cryptography · requests (DeepSeek API) · DBUtils</span>
+</div>
+</div>
+<div class="tech-tags" style="margin-top:22px">
+<span class="tech-tag">PyQt5</span><span class="tech-tag green">Python</span><span class="tech-tag orange">SQLite</span><span class="tech-tag purple">MySQL 8.0</span><span class="tech-tag red">Sybase</span><span class="tech-tag">matplotlib</span><span class="tech-tag green">seaborn</span><span class="tech-tag orange">pandas</span><span class="tech-tag purple">scipy</span><span class="tech-tag red">cryptography</span><span class="tech-tag">DeepSeek API</span>
+</div>
+</div>
+</div>
+
+<!-- ====== SLIDE 4: 多数据库支持 ====== -->
+<div class="slide content-slide" data-slide="4">
+<div class="slide-content">
+<h2>核心亮点：多数据库架构</h2>
+<p style="color:#8b85a5;margin-bottom:20px">基于<b>策略模式 + 工厂模式</b>实现 DatabaseBackend 抽象基类，一套业务代码适配三种异构数据库，SQL 方言自动适配</p>
+<div class="db-cards">
+<div class="db-card">
+<span class="db-icon"></span>
+<div class="db-name">SQLite</div>
+<div class="db-features">零配置开箱即用<br>单文件本地存储<br>适合个人独立使用<br>无需安装服务端</div>
+</div>
+<div class="db-card">
+<span class="db-icon"></span>
+<div class="db-name">MySQL 8.0</div>
+<div class="db-features">DBUtils 连接池 5~15 连接<br>自动重连 + 心跳检测<br>慢查询监控 (>1s 告警)<br>适合多用户 / 高并发</div>
+</div>
+<div class="db-card">
+<span class="db-icon"></span>
+<div class="db-name">Sybase ASA 9</div>
+<div class="db-features">三种连接方式自动切换<br>DSN / DSN-less / 文件直连<br>驱动自动检测 + 安装指引<br>企业级错误中文精准提示</div>
+</div>
+</div>
+<div class="highlight" style="margin-top:22px">
+<p><b>架构价值：</b>统一 EnhancedDataManager 对外接口，所有业务代码零感知底层差异。内置 SQL 兼容适配（SQLite strftime ↔ MySQL/Sybase DATE_FORMAT）、事务管理、连接池状态监控。扩展新数据库只需新增一个 Backend 子类。</p>
+</div>
+</div>
+</div>
+
+<!-- ====== SLIDE 5: 核心功能全景 ====== -->
+<div class="slide content-slide" data-slide="5">
+<div class="slide-content">
+<h2>核心功能全景</h2>
+<div class="card-grid">
+<div class="card purple">
+<span class="card-icon"></span><div class="card-title">首页数据概况</div>
+<div class="card-desc">四大指标卡片（总余额/总收入/总支出/净结余）、预算状态、收支双轴趋势图、分类占比饼图、最近交易列表</div>
+</div>
+<div class="card green">
+<span class="card-icon"></span><div class="card-title">分类管理</div>
+<div class="card-desc">收入类型 / 支出类型 / 支付方式三大分类体系，完整 CRUD 操作，支持灵活扩展自定义类型</div>
+</div>
+<div class="card orange">
+<span class="card-icon"></span><div class="card-title">收支记账</div>
+<div class="card-desc">收入记账 & 支出记账独立管理页面，多条件组合筛选（日期/金额/类型/支付方式），编辑删除一键操作</div>
+</div>
+<div class="card red">
+<span class="card-icon"></span><div class="card-title">流水账 & 月报</div>
+<div class="card-desc">自动合并收支生成流水账，实时逐笔计算余额；按月汇总生成收支报表，按支付方式分组统计</div>
+</div>
+<div class="card blue">
+<span class="card-icon"></span><div class="card-title">统计分析</div>
+<div class="card-desc">按日/月/年自由切换维度，双轴组合图表（柱状+折线），收入/支出/支付三大饼图占比分析</div>
+</div>
+<div class="card cyan">
+<span class="card-icon"></span><div class="card-title">系统设置</div>
+<div class="card-desc">数据库配置切换、API Key 加密管理、数据备份恢复、日志分级管理、深浅色主题切换、多账套管理</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ====== SLIDE 6: 收支记账数据链路 ====== -->
+<div class="slide content-slide" data-slide="6">
+<div class="slide-content">
+<h2>收支记账 — 完整数据链路</h2>
+<div class="flow-steps">
+<div class="flow-step"><div class="step-num">1</div><div class="step-title">录入交易</div><div class="step-desc">日期 / 类别选择<br>金额输入 / 支付方式<br>可选备注说明</div></div>
+<div class="flow-arrow">→</div>
+<div class="flow-step"><div class="step-num">2</div><div class="step-title">持久存储</div><div class="step-desc">写入 sz_sheet_sr<br>或 sz_sheet_zc 表<br>自动生成唯一单据号</div></div>
+<div class="flow-arrow">→</div>
+<div class="flow-step"><div class="step-num">3</div><div class="step-title">流水账生成</div><div class="step-desc">UNION ALL 合并收支<br>按日期 + 序号排序<br>逐笔滚动计算余额</div></div>
+<div class="flow-arrow">→</div>
+<div class="flow-step"><div class="step-num">4</div><div class="step-title">月报汇总</div><div class="step-desc">按支付方式分组<br>统计期初/收入/支出<br>计算期末余额</div></div>
+<div class="flow-arrow">→</div>
+<div class="flow-step"><div class="step-num">5</div><div class="step-title">分析输出</div><div class="step-desc">趋势图 / 饼图<br>AI 智能建议<br>多格式导出分享</div></div>
+</div>
+<div class="highlight" style="margin-top:22px">
+<p><b>完整数据表结构：</b>sz_c_sr (收入类型) · sz_c_zc (支出类型) · sz_c_zf (支付方式) · sz_sheet_sr (收入记录) · sz_sheet_zc (支出记录) · sz_table_lsz (流水账) · sz_report_srzc (月度报表) · sz_d_zt (账套信息) — 遵循财务编码规范的专业数据模型</p>
+</div>
+</div>
+</div>
+
+<!-- ====== SLIDE 7: 数据可视化 ====== -->
+<div class="slide content-slide" data-slide="7">
+<div class="slide-content">
+<h2>多维度数据可视化分析</h2>
+<div class="two-col">
+<div>
+<h3>时间维度趋势分析</h3>
+<ul class="feature-list">
+<li><span class="li-icon"></span><b>按日 / 按月 / 按年</b> 三种聚合粒度自由切换</li>
+<li><span class="li-icon"></span><b>双轴组合图表</b>：柱状图 (收支金额) + 折线图 (净结余)</li>
+<li><span class="li-icon"></span>快捷时间筛选：<b>全部历史 / 本周 / 本月 / 本年</b></li>
+<li><span class="li-icon"></span>智能标签密度控制：数据 ≤15 全显示，>30 间隔显示</li>
+<li><span class="li-icon"></span>无数据时段友好提示，引导用户调整筛选条件</li>
+</ul>
+</div>
+<div>
+<h3>分类占比分析</h3>
+<ul class="feature-list">
+<li><span class="li-icon"></span><b>收入来源占比饼图</b> — 收入结构一目了然</li>
+<li><span class="li-icon"></span><b>消费结构占比饼图</b> — 支出去向清晰呈现</li>
+<li><span class="li-icon"></span><b>支付方式占比饼图</b> — 支付习惯量化分析</li>
+<li><span class="li-icon"></span>Tab 标签页切换，图表与文字数据联动</li>
+<li><span class="li-icon"></span>自动计算百分比与排名，色彩区分核心指标</li>
+</ul>
+</div>
+</div>
+<div class="tech-tags" style="margin-top:16px">
+<span class="tech-tag">matplotlib</span><span class="tech-tag green">seaborn</span><span class="tech-tag orange">pandas</span><span class="tech-tag purple">numpy</span><span class="tech-tag red">scipy (线性回归)</span>
+</div>
+</div>
+</div>
+
+<!-- ====== SLIDE 8: AI 智能分析 ====== -->
+<div class="slide content-slide" data-slide="8">
+<div class="slide-content">
+<h2>AI 智能消费分析引擎</h2>
+<div class="two-col">
+<div>
+<div class="card green" style="margin-bottom:14px">
+<span class="card-icon"></span>
+<div class="card-title">消费习惯深度分析</div>
+<div class="card-desc">Top 5 消费类别排名与占比 · 每月消费趋势判定（线性回归斜率 — 上升 / 下降 / 稳定）· 月均 / 最高 / 最低消费量化</div>
+</div>
+<div class="card orange">
+<span class="card-icon"></span>
+<div class="card-title">异常消费自动检测</div>
+<div class="card-desc">基于统计学方法（均值 + 2σ 阈值），自动筛查异常大额交易，按异常分数降序排列并展示触发原因</div>
+</div>
+</div>
+<div>
+<div class="card purple" style="margin-bottom:14px">
+<span class="card-icon"></span>
+<div class="card-title">DeepSeek AI 集成</div>
+<div class="card-desc">结构化 prompt 将分析数据发送至 DeepSeek 大模型，生成 3~5 条个性化、可执行的理财优化建议</div>
+</div>
+<div class="card red">
+<span class="card-icon"></span>
+<div class="card-title">离线规则引擎降级</div>
+<div class="card-desc">无 API 或网络异常时，自动切换为统计规则引擎——超支警告 · 趋势提醒 · 预算分配建议 · 应急基金建议</div>
+</div>
+</div>
+</div>
+<div class="highlight" style="margin-top:18px">
+<p><b>双引擎架构设计：</b>SpendingAnalyzer 类融合统计分析（scipy 线性回归趋势判断、标准差异常检测）与 LLM 提示工程。API Key 通过 cryptography 库 AES 加密存储，兼顾智能化与安全性。</p>
+</div>
+</div>
+</div>
+
+<!-- ====== SLIDE 9: 预算管理 ====== -->
+<div class="slide content-slide" data-slide="9">
+<div class="slide-content">
+<h2>预算管理与四级预警</h2>
+<div class="two-col">
+<div>
+<div class="card-grid" style="grid-template-columns:1fr">
+<div class="card green">
+<span class="card-icon"></span><div class="card-title">月度预算设置</div>
+<div class="card-desc">按月份独立配置预算额度，支持动态调整；系统建议为月收入的 80%~90%，符合理财最佳实践</div>
+</div>
+<div class="card orange">
+<span class="card-icon"></span><div class="card-title">四级预算状态</div>
+<div class="card-desc">
+<span class="status-dot" style="background:#34d399"></span><b>健康</b> ≤80% 使用率<br>
+<span class="status-dot" style="background:#60a5fa"></span><b>正常</b> ≤90% 使用率<br>
+<span class="status-dot" style="background:#fbbf24"></span><b>即将超支</b> ≤100% 使用率<br>
+<span class="status-dot" style="background:#f87171"></span><b>已超支</b> >100% 使用率</div>
+</div>
+</div>
+</div>
+<div>
+<div class="highlight">
+<h3 style="color:#c4b5fd">预算核心指标体系</h3>
+<table class="data-table">
+<thead><tr><th>指标</th><th>计算方式</th><th>UI 展示</th></tr></thead>
+<tbody>
+<tr><td>预算总额</td><td>用户设定值</td><td>蓝色信息卡</td></tr>
+<tr><td>已使用金额</td><td>当月支出 Σ</td><td>橙色信息卡</td></tr>
+<tr><td>剩余额度</td><td>预算 - 已使用</td><td>绿色信息卡</td></tr>
+<tr><td>使用率</td><td>已使用 ÷ 预算 × 100%</td><td>动态彩色进度条</td></tr>
+</tbody>
+</table>
+</div>
+<p style="color:#8b85a5;text-align:center;margin-top:16px;font-size:13px">
+进度条颜色随状态自动变化：绿 → 蓝 → 橙 → 红，一目了然
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ====== SLIDE 10: 数据安全 & 工程化 ====== -->
+<div class="slide content-slide" data-slide="10">
+<div class="slide-content">
+<h2>数据安全与工程化设计</h2>
+<div class="two-col">
+<div>
+<h3>多层数据保护</h3>
+<ul class="feature-list">
+<li><span class="li-icon"></span><b>一键备份 / 恢复</b> — 完整 SQLite 数据库快照</li>
+<li><span class="li-icon"></span><b>API Key AES 加密</b> — cryptography 库 Fernet 对称加密</li>
+<li><span class="li-icon"></span><b>密钥分离管理</b> — connection.key + secret.key 双文件</li>
+<li><span class="li-icon"></span><b>账套号 + 密码</b> — 登录认证双重验证</li>
+<li><span class="li-icon"></span><b>事务管理</b> — begin / commit / rollback 三态控制</li>
+</ul>
+</div>
+<div>
+<h3>企业级工程特性</h3>
+<ul class="feature-list">
+<li><span class="li-icon"></span><b>启动画面</b> — QSplashScreen 品牌展示 + 异步初始化</li>
+<li><span class="li-icon"></span><b>日志系统</b> — logging 模块按级别（INFO/WARNING/ERROR）分级</li>
+<li><span class="li-icon"></span><b>连接池管理</b> — DBUtils PooledDB 管理 MySQL 连接</li>
+<li><span class="li-icon"></span><b>自动重连机制</b> — 连接失效检测 + 3 次重试策略</li>
+<li><span class="li-icon"></span><b>SQL 方言适配</b> — 跨数据库函数自动映射</li>
+<li><span class="li-icon"></span><b>友好错误引导</b> — Sybase 错误码→中文解决方案</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ====== SLIDE 11: 创新亮点 ====== -->
+<div class="slide content-slide" data-slide="11">
+<div class="slide-content">
+<h2>创新亮点总结</h2>
+<div class="card-grid">
+<div class="card purple">
+<span class="card-icon"></span>
+<div class="card-title">多数据库抽象层</div>
+<div class="card-desc">策略模式 + 工厂模式，一套代码同时驱动 SQLite / MySQL / Sybase 三种异构数据库，SQL 方言自动适配，新增数据库只需新增子类</div>
+</div>
+<div class="card green">
+<span class="card-icon"></span>
+<div class="card-title">AI + 规则双引擎</div>
+<div class="card-desc">DeepSeek 大模型提供个性化理财建议，离线自动降级为统计规则引擎，网络异常不影响核心分析能力</div>
+</div>
+<div class="card orange">
+<span class="card-icon"></span>
+<div class="card-title">完整数据闭环</div>
+<div class="card-desc">录入 → 存储 → 流水账 → 月报 → 分析五步闭环，每步可追溯审计；7 张数据表遵循专业财务编码规范</div>
+</div>
+<div class="card red">
+<span class="card-icon"></span>
+<div class="card-title">企业级工程化</div>
+<div class="card-desc">连接池管理 · 慢查询监控 · 自动重连 · 加密存储 · 日志分级 · 错误友好 · 启动画面 — 桌面应用最佳实践</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ====== SLIDE 12: 应用场景 ====== -->
+<div class="slide content-slide" data-slide="12">
+<div class="slide-content">
+<h2>应用场景与价值</h2>
+<div class="card-grid">
+<div class="card blue">
+<span class="card-icon"></span><div class="card-title">个人理财管理</div>
+<div class="card-desc">日常收支记账 · 消费习惯培养 · 月度预算控制 · 财务健康度追踪 · 异常消费预警</div>
+</div>
+<div class="card green">
+<span class="card-icon"></span><div class="card-title">小微商户经营</div>
+<div class="card-desc">多账套独立管理 · 收入分类统计 · 支付方式分析 · 简易财务报表 · 数据驱动经营决策</div>
+</div>
+<div class="card purple">
+<span class="card-icon"></span><div class="card-title">财务管理教学</div>
+<div class="card-desc">完整数据模型展示 · 记账流程实操演示 · 数据分析实践 · AI 辅助学习 · 理论与实战结合</div>
+</div>
+<div class="card orange">
+<span class="card-icon"></span><div class="card-title">数据驱动决策</div>
+<div class="card-desc">趋势预测辅助预算制定 · 异常检测及时止损 · 占比分析优化消费结构 · 量化呈现财务状况</div>
+</div>
+</div>
+<div class="highlight" style="margin-top:22px">
+<p><b>大赛契合度：</b>作品紧扣"数智经管"主题核心——将大数据分析技术（pandas / scipy / seaborn）与人工智能（DeepSeek）深度融入传统财务管理，实现从"被动记账工具"到"主动智能财务助手"的跨越式升级。</p>
+</div>
+</div>
+</div>
+
+<!-- ====== SLIDE 13: 项目总结 ====== -->
+<div class="slide content-slide" data-slide="13">
+<div class="slide-content">
+<h2>项目总结</h2>
+<div class="stats-row">
+<div class="stat-box"><div class="stat-val" style="color:#818cf8">~3,500</div><div class="stat-label">Python 代码行数</div></div>
+<div class="stat-box"><div class="stat-val" style="color:#34d399">9</div><div class="stat-label">功能模块页面</div></div>
+<div class="stat-box"><div class="stat-val" style="color:#fbbf24">7+1</div><div class="stat-label">数据表 + 视图</div></div>
+<div class="stat-box"><div class="stat-val" style="color:#a78bfa">15+</div><div class="stat-label">核心依赖库</div></div>
+</div>
+<div class="highlight">
+<h3>技术收获</h3>
+<p>完整掌握 PyQt5 桌面应用开发全流程、策略模式多数据库抽象架构、matplotlib + seaborn 数据可视化、DeepSeek API 集成与提示工程、cryptography 加密存储、DBUtils 连接池管理、reportlab PDF 动态生成等企业级开发能力。</p>
+</div>
+<div class="highlight" style="margin-top:14px">
+<h3>专业融合</h3>
+<p>作为大数据与财务管理专业学生，作品将<b>编程技术</b>与<b>财务专业知识</b>深度融合——数据库科目编码遵循会计规范、流水账遵循财务会计准则、月报设计参考财务管理实务、预算管理体现管理会计思想，真正做到"懂财务的程序员写出的财务软件"。</p>
+</div>
+</div>
+</div>
+
+<!-- ====== SLIDE 14: 未来展望 ====== -->
+<div class="slide content-slide" data-slide="14">
+<div class="slide-content">
+<h2>未来规划与展望</h2>
+<div class="two-col">
+<div>
+<div class="card purple" style="margin-bottom:14px">
+<span class="card-icon"></span><div class="card-title">多端覆盖</div>
+<div class="card-desc">开发 iOS / Android 移动端 App，通过 RESTful API 与桌面端数据实时同步，实现随时随地记账查账</div>
+</div>
+<div class="card green">
+<span class="card-icon"></span><div class="card-title">云同步服务</div>
+<div class="card-desc">搭建端到端加密云同步服务，多设备数据无缝共享，支持家庭成员 / 团队协作记账与预算管理</div>
+</div>
+</div>
+<div>
+<div class="card orange" style="margin-bottom:14px">
+<span class="card-icon"></span><div class="card-title">AI 能力升级</div>
+<div class="card-desc">接入更多 AI 模型、发票 OCR 自动识别、语音快捷记账、智能分类自动匹配、个性化财务规划报告</div>
+</div>
+<div class="card red">
+<span class="card-icon"></span><div class="card-title">插件生态系统</div>
+<div class="card-desc">开放标准化插件接口 (Plugin API)，支持社区贡献股票投资分析、税务计算、多币种汇率等专业扩展</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ====== SLIDE 15: 致谢 ====== -->
+<div class="slide cover-slide" data-slide="15">
+<div class="slide-content">
+<div class="section-num" style="font-size:160px;opacity:.03"></div>
+<h1 style="font-size:54px">敬请批评指正</h1>
+<div class="subtitle" style="margin-bottom:52px">「 数智经管 · 创见未来 」创意作品设计大赛</div>
+<div class="meta" style="font-size:18px">
+</div>
+<div style="margin-top:48px">
+</div>
+</div>
+</div>
+
+</div><!-- /slide-container -->
+
+<!-- ========== NAVIGATION ========== -->
+<div class="nav">
+<button onclick="prevSlide()" title="上一页 (←)">◀</button>
+<div class="page-indicator" id="pageIndicator">1 / 16</div>
+<button onclick="nextSlide()" title="下一页 (→)">▶</button>
+<div class="dots-row" id="dots"></div>
+</div>
+<div class="key-hint">← → 翻页 · F 全屏 · Home/End 首尾 · 点击屏幕边缘翻页</div>
+
+<script>
+// ========== STATE ==========
+let current = 0;
+const slides = document.querySelectorAll('.slide[data-slide]');
+const total = slides.length;
+const progress = document.getElementById('progress');
+const indicator = document.getElementById('pageIndicator');
+const dotsContainer = document.getElementById('dots');
+const timerEl = document.getElementById('timer');
+const startTime = Date.now();
+
+// ========== BUILD DOTS ==========
+for (let i = 0; i < total; i++) {
+  const dot = document.createElement('div');
+  dot.className = 'dot' + (i === 0 ? ' active' : '');
+  dot.onclick = () => goTo(i);
+  dotsContainer.appendChild(dot);
+}
+
+// ========== NAVIGATION ==========
+function goTo(n) {
+  if (n < 0 || n >= total) return;
+  slides[current].classList.remove('active');
+  document.querySelectorAll('.dot')[current].classList.remove('active');
+  current = n;
+  slides[current].classList.add('active');
+  document.querySelectorAll('.dot')[current].classList.add('active');
+  progress.style.width = ((current + 1) / total * 100) + '%';
+  indicator.textContent = (current + 1) + ' / ' + total;
+}
+
+function nextSlide() { goTo(Math.min(current + 1, total - 1)); }
+function prevSlide() { goTo(Math.max(current - 1, 0)); }
+
+// ========== KEYBOARD ==========
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+    e.preventDefault(); nextSlide();
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault(); prevSlide();
+  } else if (e.key === 'f' || e.key === 'F') {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else if (document.exitFullscreen) document.exitFullscreen();
+  } else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  else if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+});
+
+// ========== CLICK EDGE ==========
+document.addEventListener('click', e => {
+  if (e.target.closest('.nav') || e.target.closest('.slide-content a') || e.target.closest('button')) return;
+  const w = window.innerWidth;
+  if (e.clientX > w * 0.72) nextSlide();
+  else if (e.clientX < w * 0.28) prevSlide();
+});
+
+// ========== TOUCH ==========
+let touchStartX = 0, touchStartY = 0;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, {passive: true});
+document.addEventListener('touchend', e => {
+  const dx = touchStartX - e.changedTouches[0].clientX;
+  const dy = touchStartY - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+    dx > 0 ? nextSlide() : prevSlide();
+  }
+});
+
+// ========== TIMER ==========
+setInterval(() => {
+  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+  const m = Math.floor(elapsed / 60).toString().padStart(2, '0');
+  const s = (elapsed % 60).toString().padStart(2, '0');
+  timerEl.textContent = m + ':' + s;
+}, 1000);
+
+// ========== INIT ==========
+goTo(0);
+</script>
+</body>
+</html>
