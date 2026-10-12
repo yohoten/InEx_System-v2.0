@@ -3,712 +3,1498 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>InEx_System v2.0 — 收支管理系统 串讲演示</title>
+<title>InEx_System v2.0 — 个人收支管理系统 · 串讲演示</title>
 <style>
-/* ========== RESET & BASE ========== */
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-@font-face{font-family:'Mono';src:local('Cascadia Code'),local('Consolas'),local('monospace')}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Microsoft YaHei','PingFang SC','Segoe UI','Helvetica Neue',sans-serif;background:#0b0914;color:#e0dfe8;-webkit-font-smoothing:antialiased}
+html,body{width:100%;height:100%;overflow:hidden;
+  font-family:'Microsoft YaHei','PingFang SC','Segoe UI','Helvetica Neue',sans-serif;
+  background:#08060f;color:#e8e6f2;-webkit-font-smoothing:antialiased}
 .slide-container{width:100%;height:100%;position:relative}
 
-/* ========== SLIDE BASE ========== */
-.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(0.96);filter:blur(4px);transition:all .5s cubic-bezier(.22,1,.36,1);pointer-events:none;padding:50px 70px}
-.slide.active{opacity:1;transform:scale(1);filter:blur(0);pointer-events:auto;z-index:10}
-.slide-content{width:100%;max-width:1140px;max-height:86vh;overflow-y:auto;position:relative;z-index:2}
+/* ---------- icon system ---------- */
+.ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 
-/* ========== SCROLLBAR ========== */
+/* ============================================================
+   SLIDE BASE
+   ============================================================ */
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  opacity:0;transform:scale(.965);filter:blur(5px);
+  transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1),filter .45s ease;
+  pointer-events:none;padding:52px 78px 92px}
+.slide.active{opacity:1;transform:scale(1);filter:blur(0);pointer-events:auto;z-index:10}
+.slide-content{width:100%;max-width:1180px;max-height:84vh;overflow-y:auto;position:relative;z-index:2}
 .slide-content::-webkit-scrollbar{width:4px}
 .slide-content::-webkit-scrollbar-track{background:transparent}
-.slide-content::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:4px}
-.slide-content::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.25)}
+.slide-content::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:4px}
+.slide-content::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.26)}
 
-/* ========== COVER & SECTION SLIDES ========== */
-.cover-slide,.section-slide{background:#0b0914;color:#fff;text-align:center;overflow:hidden}
-.cover-slide::before,.section-slide::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(102,126,234,.12) 0%,transparent 70%),radial-gradient(ellipse 60% 50% at 80% 80%,rgba(139,92,246,.08) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 20% 20%,rgba(16,185,129,.05) 0%,transparent 70%);pointer-events:none;z-index:1}
+/* ============================================================
+   BACKDROP (cover / section)
+   ============================================================ */
+.cover-slide,.section-slide{background:#08060f;text-align:center}
+.cover-slide::before,.section-slide::before{content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 78% 58% at 50% 38%,rgba(124,108,240,.16) 0%,transparent 70%),
+    radial-gradient(ellipse 58% 48% at 82% 82%,rgba(139,92,246,.10) 0%,transparent 70%),
+    radial-gradient(ellipse 48% 48% at 16% 20%,rgba(16,185,129,.07) 0%,transparent 70%);
+  pointer-events:none;z-index:1}
+.cover-slide::after,.section-slide::after{content:'';position:absolute;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:32px 32px;pointer-events:none;z-index:0}
 
-/* Grid dots pattern */
-.cover-slide::after,.section-slide::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0}
+/* ---------- cover ---------- */
+.cover-badge{display:inline-flex;align-items:center;gap:10px;padding:9px 30px;
+  border:1px solid rgba(167,139,250,.28);border-radius:40px;font-size:14px;letter-spacing:3px;
+  margin-bottom:34px;color:#b9aef0;background:rgba(167,139,250,.07);position:relative;z-index:2}
+.cover-slide h1{font-size:66px;font-weight:900;line-height:1.1;
+  background:linear-gradient(135deg,#c4b5fd 0%,#818cf8 32%,#60a5fa 62%,#34d399 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:16px;letter-spacing:2px;position:relative;z-index:2;
+  filter:drop-shadow(0 0 42px rgba(139,92,246,.28))}
+.cover-slide .subtitle{font-size:26px;font-weight:300;color:rgba(255,255,255,.62);
+  margin-bottom:40px;position:relative;z-index:2;letter-spacing:2px}
+.cover-meta{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;position:relative;z-index:2}
+.cover-meta span{font-size:14px;color:rgba(255,255,255,.55);padding:7px 18px;
+  border:1px solid rgba(255,255,255,.09);border-radius:10px;background:rgba(255,255,255,.025)}
 
-.cover-slide .cover-badge{display:inline-block;padding:10px 32px;border:1.5px solid rgba(255,255,255,.2);border-radius:40px;font-size:15px;letter-spacing:5px;margin-bottom:36px;color:rgba(255,255,255,.7);backdrop-filter:blur(8px);background:rgba(255,255,255,.03);position:relative;z-index:2}
-.cover-slide h1{font-size:68px;font-weight:900;background:linear-gradient(135deg,#a78bfa 0%,#818cf8 30%,#60a5fa 60%,#34d399 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:18px;letter-spacing:3px;position:relative;z-index:2;filter:drop-shadow(0 0 40px rgba(139,92,246,.3))}
-.cover-slide .subtitle{font-size:28px;font-weight:300;color:rgba(255,255,255,.6);margin-bottom:44px;position:relative;z-index:2;letter-spacing:1px}
-.cover-slide .meta{font-size:17px;color:rgba(255,255,255,.45);line-height:2.2;position:relative;z-index:2}
-.cover-slide .meta span{padding:0 20px;border-right:1px solid rgba(255,255,255,.12)}
-.cover-slide .meta span:last-child{border-right:none}
+/* ---------- section divider ---------- */
+.section-slide .section-num{font-size:150px;font-weight:900;opacity:.05;position:absolute;
+  top:32px;left:50%;transform:translateX(-50%);z-index:0;
+  font-family:'Cascadia Code','Consolas',monospace;letter-spacing:-6px}
+.section-slide h2{font-size:44px;font-weight:800;margin-bottom:20px;position:relative;z-index:2;letter-spacing:1px}
+.section-slide .section-desc{font-size:19px;font-weight:300;color:rgba(255,255,255,.5);
+  position:relative;z-index:2;line-height:2}
+.section-rule{width:70px;height:3px;margin:0 auto 26px;border-radius:2px;
+  background:linear-gradient(90deg,#8b5cf6,#60a5fa);position:relative;z-index:2}
 
-.section-slide .section-num{font-size:140px;font-weight:900;opacity:.04;position:absolute;top:40px;left:50%;transform:translateX(-50%);z-index:0;font-family:'Mono',monospace}
-.section-slide h2{font-size:46px;font-weight:800;margin-bottom:22px;position:relative;z-index:2;letter-spacing:1px}
-.section-slide .section-desc{font-size:20px;font-weight:300;color:rgba(255,255,255,.5);position:relative;z-index:2;line-height:2}
+/* ---------- table of contents ---------- */
+.toc{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;max-width:900px;margin:26px auto 0;position:relative;z-index:2}
+.toc-item{display:flex;align-items:center;gap:16px;padding:16px 20px;border-radius:14px;
+  border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);
+  cursor:pointer;transition:all .28s cubic-bezier(.22,1,.36,1);text-align:left}
+.toc-item:hover{background:rgba(139,92,246,.10);border-color:rgba(167,139,250,.35);transform:translateX(6px)}
+.toc-item .toc-num{font-size:19px;font-weight:800;color:#8b5cf6;
+  font-family:'Cascadia Code','Consolas',monospace;min-width:34px}
+.toc-item .toc-txt{font-size:16px;color:#dcd8ee}
+.toc-item .toc-sub{font-size:12px;color:#7d7699;margin-top:3px}
 
-/* ========== CONTENT SLIDES ========== */
-.content-slide{background:linear-gradient(180deg,#0f0d1a 0%,#131022 100%);overflow:hidden}
-.content-slide::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:radial-gradient(rgba(255,255,255,.015) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+/* ============================================================
+   CONTENT SLIDES
+   ============================================================ */
+.content-slide{background:linear-gradient(180deg,#0c0a15 0%,#100d1d 100%)}
+.content-slide::after{content:'';position:absolute;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.016) 1px,transparent 1px);
+  background-size:28px 28px;pointer-events:none;z-index:0}
+.content-slide h2{font-size:32px;font-weight:800;color:#f2eff8;margin-bottom:8px;letter-spacing:.5px}
+.content-slide h2 .h2-sub{display:block;font-size:14px;font-weight:400;color:#7d7699;
+  letter-spacing:.4px;margin-top:8px}
+.h2-bar{width:100%;height:2px;margin:14px 0 22px;border-radius:2px;
+  background:linear-gradient(90deg,#8b5cf6 0%,#60a5fa 22%,rgba(255,255,255,.05) 60%,transparent 100%)}
+.content-slide h3{font-size:18px;font-weight:700;color:#c4b5fd;margin:20px 0 12px;letter-spacing:.3px;
+  display:flex;align-items:center;gap:9px}
+.content-slide h3 .ic{font-size:18px;color:#8b5cf6}
+p.lead{font-size:14.5px;color:#918aa8;line-height:1.85}
 
-.content-slide h2{font-size:33px;font-weight:800;color:#f0edf6;margin-bottom:28px;padding-bottom:16px;border-bottom:2px solid rgba(102,126,234,.3);display:inline-block;letter-spacing:.5px;position:relative}
-.content-slide h2::after{content:'';position:absolute;bottom:-2px;left:0;width:50%;height:2px;background:linear-gradient(90deg,#667eea,transparent)}
-.content-slide h3{font-size:19px;font-weight:700;color:#c4b5fd;margin:18px 0 10px;letter-spacing:.3px}
+/* ============================================================
+   CARDS
+   ============================================================ */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:16px}
+.card{background:linear-gradient(140deg,rgba(255,255,255,.045) 0%,rgba(255,255,255,.012) 100%);
+  border:1px solid rgba(255,255,255,.065);border-radius:16px;padding:24px 22px;
+  transition:all .35s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;width:3px;height:34px;
+  border-radius:0 0 3px 0;transition:height .35s}
+.card:hover{transform:translateY(-5px);border-color:rgba(255,255,255,.12);
+  box-shadow:0 18px 46px rgba(0,0,0,.34)}
+.card:hover::before{height:100%}
+.card-head{display:flex;align-items:center;gap:11px;margin-bottom:10px}
+.card-icon-wrap{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:19px;flex-shrink:0}
+.card-title{font-size:16.5px;font-weight:700;color:#f2eff8;letter-spacing:.3px}
+.card-desc{font-size:13.5px;color:#918aa8;line-height:1.78}
 
-/* ========== CARDS ========== */
-.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-top:18px}
-.card{background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.01) 100%);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:30px 24px;transition:all .35s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden;backdrop-filter:blur(8px)}
-.card::before{content:'';position:absolute;top:0;left:0;width:4px;height:40px;border-radius:0 0 4px 0;transition:all .35s}
-.card:hover{transform:translateY(-6px);border-color:rgba(255,255,255,.1);box-shadow:0 20px 50px rgba(0,0,0,.3),0 0 0 1px rgba(255,255,255,.03) inset}
-.card:hover::before{height:100%;width:4px;border-radius:0}
-.card .card-icon{font-size:34px;margin-bottom:14px;display:block;filter:grayscale(0);transition:transform .35s}
-.card:hover .card-icon{transform:scale(1.15)}
-.card .card-title{font-size:18px;font-weight:700;color:#f0edf6;margin-bottom:10px;letter-spacing:.3px}
-.card .card-desc{font-size:14px;color:#8b85a5;line-height:1.75}
-.card.purple::before{background:linear-gradient(180deg,#a78bfa,#8b5cf6)}.card.purple .card-icon{text-shadow:0 0 20px rgba(167,139,250,.3)}
-.card.green::before{background:linear-gradient(180deg,#34d399,#10b981)}.card.green .card-icon{text-shadow:0 0 20px rgba(52,211,153,.3)}
-.card.orange::before{background:linear-gradient(180deg,#fbbf24,#f59e0b)}.card.orange .card-icon{text-shadow:0 0 20px rgba(251,191,36,.3)}
-.card.red::before{background:linear-gradient(180deg,#f87171,#ef4444)}.card.red .card-icon{text-shadow:0 0 20px rgba(248,113,113,.3)}
-.card.blue::before{background:linear-gradient(180deg,#60a5fa,#3b82f6)}.card.blue .card-icon{text-shadow:0 0 20px rgba(96,165,250,.3)}
-.card.cyan::before{background:linear-gradient(180deg,#22d3ee,#06b6d4)}.card.cyan .card-icon{text-shadow:0 0 20px rgba(34,211,238,.3)}
+.c-purple::before{background:linear-gradient(180deg,#a78bfa,#8b5cf6)}
+.c-purple .card-icon-wrap{background:rgba(139,92,246,.15);color:#c4b5fd;box-shadow:0 0 22px rgba(139,92,246,.18) inset}
+.c-green::before{background:linear-gradient(180deg,#34d399,#10b981)}
+.c-green .card-icon-wrap{background:rgba(16,185,129,.15);color:#6ee7b7}
+.c-orange::before{background:linear-gradient(180deg,#fbbf24,#f59e0b)}
+.c-orange .card-icon-wrap{background:rgba(245,158,11,.15);color:#fcd34d}
+.c-red::before{background:linear-gradient(180deg,#f87171,#ef4444)}
+.c-red .card-icon-wrap{background:rgba(239,68,68,.15);color:#fca5a5}
+.c-blue::before{background:linear-gradient(180deg,#60a5fa,#3b82f6)}
+.c-blue .card-icon-wrap{background:rgba(59,130,246,.15);color:#93c5fd}
+.c-cyan::before{background:linear-gradient(180deg,#22d3ee,#06b6d4)}
+.c-cyan .card-icon-wrap{background:rgba(6,182,212,.15);color:#67e8f9}
 
-/* ========== FEATURE LIST ========== */
-.feature-list{list-style:none;padding:0}
-.feature-list li{display:flex;align-items:flex-start;gap:14px;padding:13px 18px;margin:6px 0;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:12px;font-size:15px;color:#c4bfd9;line-height:1.6;transition:all .25s}
-.feature-list li:hover{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)}
-.feature-list li .li-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+/* ============================================================
+   FEATURE LIST
+   ============================================================ */
+.feature-list{list-style:none;display:flex;flex-direction:column;gap:7px}
+.feature-list li{display:flex;align-items:flex-start;gap:12px;padding:11px 16px;
+  background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.045);
+  border-radius:11px;font-size:14px;color:#c2bddd;line-height:1.65;transition:all .25s}
+.feature-list li:hover{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
+.feature-list li .li-icon{font-size:17px;margin-top:1px;color:#8b5cf6}
+.feature-list li b{color:#ece9f7;font-weight:700}
+.feature-list.plain li{background:transparent;border:none;padding:5px 0 5px 2px}
+.feature-list.plain li:hover{background:transparent}
+code{font-family:'Cascadia Code','Consolas',monospace;font-size:.92em;
+  background:rgba(139,92,246,.14);color:#c4b5fd;padding:1.5px 6px;border-radius:5px}
 
-/* ========== TWO COLUMN ========== */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+.two-col.narrow-right{grid-template-columns:1.15fr .85fr}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 
-/* ========== HIGHLIGHT BOX ========== */
-.highlight{background:linear-gradient(135deg,rgba(102,126,234,.06),rgba(139,92,246,.04));border:1px solid rgba(102,126,234,.12);border-radius:16px;padding:26px 30px;margin:18px 0;border-left:3px solid #667eea;position:relative;overflow:hidden}
-.highlight::after{content:'';position:absolute;top:-50%;right:-50%;width:200px;height:200px;background:radial-gradient(circle,rgba(102,126,234,.06) 0%,transparent 70%);pointer-events:none}
-.highlight p{font-size:15px;line-height:1.9;color:#a8a3c5;position:relative;z-index:1}
-.highlight h3{margin-top:0!important}
+/* ============================================================
+   HIGHLIGHT / CALLOUT
+   ============================================================ */
+.highlight{background:linear-gradient(135deg,rgba(124,108,240,.075),rgba(139,92,246,.04));
+  border:1px solid rgba(124,108,240,.16);border-left:3px solid #7c6cf0;
+  border-radius:14px;padding:22px 26px;margin:18px 0}
+.highlight p{font-size:14px;line-height:1.9;color:#a49dc0}
+.highlight b{color:#ddd8f2}
+.highlight h3{margin-top:0}
 
-/* ========== TECH TAGS ========== */
-.tech-tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
-.tech-tag{padding:7px 18px;border-radius:22px;font-size:13px;font-weight:600;letter-spacing:.3px;border:1px solid rgba(255,255,255,.1);transition:all .25s;cursor:default}
-.tech-tag:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
-.tech-tag{background:rgba(102,126,234,.15);color:#a5b4fc;border-color:rgba(102,126,234,.2)}
-.tech-tag.green{background:rgba(16,185,129,.15);color:#6ee7b7;border-color:rgba(16,185,129,.2)}
-.tech-tag.orange{background:rgba(245,158,11,.15);color:#fcd34d;border-color:rgba(245,158,11,.2)}
-.tech-tag.purple{background:rgba(139,92,246,.15);color:#c4b5fd;border-color:rgba(139,92,246,.2)}
-.tech-tag.red{background:rgba(239,68,68,.15);color:#fca5a5;border-color:rgba(239,68,68,.2)}
+/* ============================================================
+   FORMULA BLOCK  (科学化表达)
+   ============================================================ */
+.formula-box{border:1px solid rgba(255,255,255,.07);border-radius:12px;overflow:hidden;margin-top:12px}
+.formula-row{display:grid;grid-template-columns:132px 1fr;gap:0;
+  border-bottom:1px solid rgba(255,255,255,.05)}
+.formula-row:last-child{border-bottom:none}
+.formula-row:nth-child(odd){background:rgba(255,255,255,.018)}
+.formula-name{padding:13px 16px;font-size:13px;font-weight:700;color:#c4b5fd;
+  border-right:1px solid rgba(255,255,255,.055);display:flex;align-items:center;gap:7px}
+.formula-expr{padding:13px 18px;font-family:'Cascadia Code','Consolas',monospace;
+  font-size:13.5px;color:#e2def2;line-height:1.7;letter-spacing:.2px}
+.formula-expr em{font-style:normal;color:#7d7699;font-family:inherit}
+.formula-note{font-size:11.5px;color:#7d7699;font-family:'Microsoft YaHei',sans-serif;display:block;margin-top:4px}
 
-/* ========== ARCHITECTURE STACK ========== */
-.arch-stack{display:flex;flex-direction:column;gap:12px;margin-top:20px}
-.arch-layer{display:flex;align-items:center;gap:20px;padding:18px 28px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:14px;transition:all .3s}
-.arch-layer:hover{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)}
-.arch-layer .layer-label{font-size:13px;font-weight:700;color:#fff;padding:8px 20px;border-radius:8px;white-space:nowrap;min-width:90px;text-align:center;letter-spacing:.5px;box-shadow:0 4px 16px rgba(0,0,0,.2)}
-.arch-layer .layer-content{font-size:15px;color:#a8a3c5;line-height:1.6}
+/* ============================================================
+   STATS
+   ============================================================ */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}
+.stat-box{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);
+  border-radius:14px;padding:20px 16px;text-align:center;transition:all .3s}
+.stat-box:hover{background:rgba(255,255,255,.05);transform:translateY(-3px);
+  box-shadow:0 10px 28px rgba(0,0,0,.28)}
+.stat-val{font-size:29px;font-weight:800;line-height:1.15;
+  font-family:'Cascadia Code','Consolas',monospace;letter-spacing:-1px}
+.stat-label{font-size:12.5px;color:#8b85a5;margin-top:6px;letter-spacing:.4px}
+.stat-hint{font-size:11px;color:#625c80;margin-top:3px}
 
-/* ========== DB CARDS ========== */
-.db-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:20px}
-.db-card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:18px;padding:32px 24px;text-align:center;transition:all .35s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden}
-.db-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;transition:all .35s}
-.db-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,.3);border-color:rgba(255,255,255,.1)}
-.db-card:hover::before{height:6px}
+/* ============================================================
+   TABLE
+   ============================================================ */
+.data-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+.data-table th{background:rgba(124,108,240,.11);padding:11px 15px;text-align:left;font-weight:700;
+  color:#c4b5fd;border-bottom:1px solid rgba(255,255,255,.07);font-size:12.5px;letter-spacing:.5px}
+.data-table td{padding:10px 15px;border-bottom:1px solid rgba(255,255,255,.035);color:#a49dc0;vertical-align:top}
+.data-table tbody tr:hover{background:rgba(255,255,255,.022)}
+.data-table td b{color:#e0dcf0;font-weight:700}
+.data-table .mono{font-family:'Cascadia Code','Consolas',monospace;font-size:12.5px;color:#c4b5fd}
+
+/* ============================================================
+   TECH TAGS
+   ============================================================ */
+.tech-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tech-tag{padding:6px 15px;border-radius:20px;font-size:12.5px;font-weight:600;letter-spacing:.3px;
+  border:1px solid rgba(255,255,255,.1);background:rgba(124,108,240,.14);color:#a5b4fc;
+  transition:all .25s;cursor:default}
+.tech-tag:hover{transform:translateY(-2px)}
+.tech-tag.g{background:rgba(16,185,129,.14);color:#6ee7b7;border-color:rgba(16,185,129,.22)}
+.tech-tag.o{background:rgba(245,158,11,.14);color:#fcd34d;border-color:rgba(245,158,11,.22)}
+.tech-tag.p{background:rgba(139,92,246,.14);color:#c4b5fd;border-color:rgba(139,92,246,.22)}
+.tech-tag.r{background:rgba(239,68,68,.14);color:#fca5a5;border-color:rgba(239,68,68,.22)}
+.tech-tag.c{background:rgba(6,182,212,.14);color:#67e8f9;border-color:rgba(6,182,212,.22)}
+
+/* ============================================================
+   DB CARDS
+   ============================================================ */
+.db-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
+.db-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);
+  border-radius:16px;padding:26px 22px;transition:all .35s cubic-bezier(.22,1,.36,1);
+  position:relative;overflow:hidden}
+.db-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.db-card:hover{transform:translateY(-5px);box-shadow:0 18px 44px rgba(0,0,0,.34);
+  border-color:rgba(255,255,255,.11)}
 .db-card:nth-child(1)::before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
 .db-card:nth-child(2)::before{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
 .db-card:nth-child(3)::before{background:linear-gradient(90deg,#ef4444,#f87171)}
-.db-card .db-icon{font-size:42px;margin-bottom:14px;display:block}
-.db-card .db-name{font-size:20px;font-weight:700;color:#f0edf6;margin-bottom:10px}
-.db-card .db-features{font-size:13px;color:#8b85a5;line-height:2}
+.db-head{display:flex;align-items:center;gap:11px;margin-bottom:14px}
+.db-icon-wrap{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;
+  justify-content:center;font-size:21px}
+.db-name{font-size:18px;font-weight:700;color:#f2eff8}
+.db-role{font-size:11.5px;color:#7d7699;margin-top:2px}
+.db-params{list-style:none;display:flex;flex-direction:column;gap:6px}
+.db-params li{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;
+  padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.05)}
+.db-params li:last-child{border-bottom:none}
+.db-params .k{color:#7d7699}
+.db-params .v{color:#ddd8f2;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;text-align:right}
 
-/* ========== FLOW STEPS ========== */
-.flow-steps{display:flex;justify-content:space-between;align-items:flex-start;margin:24px 0;gap:6px}
-.flow-step{flex:1;text-align:center;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:16px;padding:24px 14px;transition:all .3s;position:relative}
-.flow-step:hover{background:rgba(255,255,255,.04);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.2)}
-.flow-step .step-num{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#667eea,#8b5cf6);color:#fff;font-size:18px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 8px 24px rgba(102,126,234,.3)}
-.flow-step .step-title{font-size:16px;font-weight:700;color:#f0edf6;margin-bottom:8px}
-.flow-step .step-desc{font-size:13px;color:#8b85a5;line-height:1.7}
-.flow-arrow{font-size:26px;color:rgba(102,126,234,.4);align-self:center;flex-shrink:0;font-weight:bold}
+/* ============================================================
+   FLOW STEPS
+   ============================================================ */
+.flow-steps{display:flex;align-items:stretch;margin:20px 0;gap:0}
+.flow-step{flex:1;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);
+  border-radius:14px;padding:20px 14px;text-align:center;transition:all .3s;position:relative;min-width:0}
+.flow-step:hover{background:rgba(255,255,255,.05);transform:translateY(-4px)}
+.step-num{width:38px;height:38px;border-radius:50%;margin:0 auto 12px;
+  background:linear-gradient(135deg,#7c6cf0,#8b5cf6);color:#fff;font-size:16px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cascadia Code','Consolas',monospace;box-shadow:0 6px 20px rgba(124,108,240,.32)}
+.step-title{font-size:15px;font-weight:700;color:#f2eff8;margin-bottom:7px}
+.step-desc{font-size:12.5px;color:#918aa8;line-height:1.7}
+.step-tag{display:inline-block;margin-top:9px;font-size:10.5px;padding:3px 9px;border-radius:6px;
+  background:rgba(124,108,240,.14);color:#a5b4fc;font-family:'Cascadia Code','Consolas',monospace}
+.flow-arrow{display:flex;align-items:center;justify-content:center;flex:0 0 34px;color:rgba(139,92,246,.55)}
+.flow-arrow .ic{font-size:20px}
 
-/* ========== STATS ========== */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:20px 0}
-.stat-box{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:14px;padding:22px;text-align:center;transition:all .3s}
-.stat-box:hover{background:rgba(255,255,255,.04);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
-.stat-box .stat-val{font-size:30px;font-weight:800;margin:8px 0;font-family:'Mono',monospace;letter-spacing:-1px}
-.stat-box .stat-label{font-size:13px;color:#8b85a5;letter-spacing:.5px}
+/* ============================================================
+   PROGRESS / METER
+   ============================================================ */
+.meter-row{display:flex;align-items:center;gap:14px;padding:9px 0}
+.meter-label{font-size:13px;color:#a49dc0;min-width:120px}
+.meter-track{flex:1;height:9px;border-radius:6px;background:rgba(255,255,255,.06);overflow:hidden}
+.meter-fill{height:100%;border-radius:6px}
+.meter-val{font-size:12.5px;font-family:'Cascadia Code','Consolas',monospace;min-width:62px;text-align:right}
 
-/* ========== TABLE ========== */
-.data-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
-.data-table th{background:rgba(102,126,234,.1);padding:14px 18px;text-align:left;font-weight:700;color:#c4b5fd;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px;letter-spacing:.5px}
-.data-table td{padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.03);color:#a8a3c5}
-.data-table tr{transition:all .2s}
-.data-table tbody tr:hover{background:rgba(255,255,255,.02)}
+/* status pill */
+.pill{display:inline-flex;align-items:center;gap:7px;padding:4px 12px;border-radius:20px;
+  font-size:12px;font-weight:700}
+.pill i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.pill.ok{background:rgba(16,185,129,.14);color:#6ee7b7}
+.pill.ok i{background:#34d399;box-shadow:0 0 8px #34d399}
+.pill.warn{background:rgba(245,158,11,.14);color:#fcd34d}
+.pill.warn i{background:#fbbf24;box-shadow:0 0 8px #fbbf24}
+.pill.bad{background:rgba(239,68,68,.14);color:#fca5a5}
+.pill.bad i{background:#f87171;box-shadow:0 0 8px #f87171}
 
-/* ========== NAV BAR ========== */
-.nav{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;z-index:100;background:rgba(15,13,26,.85);padding:10px 22px;border-radius:44px;backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);box-shadow:0 8px 32px rgba(0,0,0,.4)}
-.nav button{width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#c4bfd9;cursor:pointer;font-size:17px;transition:all .25s;display:flex;align-items:center;justify-content:center;font-family:inherit}
-.nav button:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.2);color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.3)}
-.nav button:active{transform:scale(.92)}
-.nav .page-indicator{color:#c4bfd9;font-size:13px;min-width:80px;text-align:center;font-weight:600;letter-spacing:.5px;font-family:'Mono',monospace}
-.nav .dots-row{display:flex;gap:8px;margin-left:6px}
-.nav .dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.15);transition:all .35s;cursor:pointer}
-.nav .dot:hover{background:rgba(255,255,255,.3)}
-.nav .dot.active{background:#818cf8;width:26px;border-radius:4px;box-shadow:0 0 12px rgba(129,140,248,.4)}
+/* ============================================================
+   MODULE SCALE BAR CHART
+   ============================================================ */
+.scale-list{display:flex;flex-direction:column;gap:10px}
+.scale-row{display:grid;grid-template-columns:76px 1fr 96px;align-items:center;gap:13px}
+.scale-name{font-size:12.5px;color:#a49dc0;text-align:right}
+.scale-track{height:15px;border-radius:8px;background:rgba(255,255,255,.05);overflow:hidden}
+.scale-fill{height:100%;border-radius:8px}
+.scale-num{font-size:12px;font-family:'Cascadia Code','Consolas',monospace;color:#c2bddd;text-align:right}
+.scale-num em{font-style:normal;color:#625c80;font-size:11px}
+.scale-list.files{gap:8px}
+.scale-list.files .scale-row{grid-template-columns:208px 1fr 52px}
+.scale-list.files .scale-name{text-align:left;font-size:11.5px;
+  font-family:'Cascadia Code','Consolas',monospace;color:#8b85a5}
+.scale-list.files .scale-num{font-size:11.5px}
 
-/* ========== PROGRESS BAR ========== */
-.progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#667eea,#8b5cf6,#a78bfa,#34d399);z-index:101;transition:width .5s cubic-bezier(.22,1,.36,1);box-shadow:0 0 12px rgba(102,126,234,.4)}
+/* ============================================================
+   KPI STRIP
+   ============================================================ */
+.kpi-strip{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:12px}
+.kpi{border-radius:11px;padding:11px 14px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025)}
+.kpi .kpi-lb{display:block;font-size:11.5px;color:#7d7699;margin-bottom:4px}
+.kpi .kpi-v{display:block;font-size:18px;font-weight:800;
+  font-family:'Cascadia Code','Consolas',monospace;letter-spacing:-.5px}
 
-/* ========== TIMER ========== */
-.timer{position:fixed;top:18px;right:28px;z-index:102;background:rgba(15,13,26,.8);color:#a78bfa;padding:8px 18px;border-radius:22px;font-size:13px;backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.06);font-family:'Mono',monospace;letter-spacing:1px;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+/* ============================================================
+   COMPACT ICON GRID
+   ============================================================ */
+.icon-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.icon-cell{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
+  background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.045);transition:all .25s}
+.icon-cell:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09)}
+.icon-cell .cell-ic{font-size:17px;color:#8b5cf6;flex-shrink:0}
+.icon-cell .cell-txt{font-size:12px;color:#918aa8;line-height:1.45}
+.icon-cell .cell-txt b{display:block;color:#ece9f7;font-weight:700;font-size:13px;margin-bottom:1px}
 
-/* ========== KEY HINT ========== */
-.key-hint{position:fixed;bottom:94px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.25);font-size:11px;z-index:99;letter-spacing:1px}
+/* ============================================================
+   SVG DIAGRAM HOLDERS
+   ============================================================ */
+.diagram{width:100%;height:auto;display:block;margin:6px 0}
+.chart-pair{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:16px}
+.chart-panel{border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px 18px;
+  background:rgba(255,255,255,.022)}
+.chart-panel h4{font-size:14px;font-weight:700;color:#e0dcf0;margin-bottom:2px;
+  display:flex;align-items:center;gap:8px}
+.chart-panel h4 .ic{font-size:16px;color:#8b5cf6}
+.chart-panel .cap{font-size:11.5px;color:#7d7699;margin-bottom:8px}
 
-/* ========== STATUS DOTS ========== */
-.status-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;box-shadow:0 0 8px currentColor}
+/* ============================================================
+   NAV BAR
+   ============================================================ */
+.nav{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);display:flex;align-items:center;
+  gap:12px;z-index:100;background:rgba(13,11,22,.88);padding:8px 18px;border-radius:44px;
+  backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.07);box-shadow:0 10px 34px rgba(0,0,0,.45)}
+.nav button{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.055);color:#c2bddd;cursor:pointer;font-size:15px;transition:all .25s;
+  display:flex;align-items:center;justify-content:center;font-family:inherit;padding:0}
+.nav button:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.2);color:#fff}
+.nav button:active{transform:scale(.9)}
+.nav .page-indicator{color:#c2bddd;font-size:12.5px;min-width:62px;text-align:center;font-weight:600;
+  letter-spacing:.5px;font-family:'Cascadia Code','Consolas',monospace}
+.nav .chapter-label{font-size:11.5px;color:#7d7699;max-width:190px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;padding-right:10px;border-right:1px solid rgba(255,255,255,.08)}
+.nav .dots-row{display:flex;gap:6px;align-items:center}
+.nav .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.16);
+  transition:all .35s;cursor:pointer;flex-shrink:0}
+.nav .dot:hover{background:rgba(255,255,255,.34)}
+.nav .dot.active{background:#818cf8;width:20px;border-radius:3px;box-shadow:0 0 10px rgba(129,140,248,.45)}
 
-/* ========== RESPONSIVE ========== */
-@media(max-width:960px){
-  .two-col,.db-cards{grid-template-columns:1fr}
-  .flow-steps{flex-direction:column}
-  .flow-arrow{transform:rotate(90deg)}
-  .stats-row{grid-template-columns:repeat(2,1fr)}
-  .slide{padding:30px 20px}
-  .cover-slide h1{font-size:38px}
-  .section-slide h2{font-size:32px}
-  .content-slide h2{font-size:24px}
-  .nav{padding:8px 16px;gap:8px}
-  .nav .dots-row{display:none}
+/* ============================================================
+   HUD
+   ============================================================ */
+.progress{position:fixed;top:0;left:0;height:3px;
+  background:linear-gradient(90deg,#7c6cf0,#8b5cf6,#60a5fa,#34d399);z-index:101;
+  transition:width .5s cubic-bezier(.22,1,.36,1);box-shadow:0 0 12px rgba(124,108,240,.45)}
+.timer{position:fixed;top:16px;right:26px;z-index:102;background:rgba(13,11,22,.82);color:#b9aef0;
+  padding:7px 16px;border-radius:20px;font-size:12.5px;backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.07);font-family:'Cascadia Code','Consolas',monospace;
+  letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.timer::before{content:'';width:6px;height:6px;border-radius:50%;background:#34d399;
+  animation:pulse 2s ease-in-out infinite;box-shadow:0 0 8px rgba(52,211,153,.6)}
+.key-hint{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);
+  color:rgba(255,255,255,.22);font-size:11px;z-index:99;letter-spacing:1px}
+
+/* ============================================================
+   ANIMATION
+   ============================================================ */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.slide.active .card,.slide.active .stat-box,.slide.active .db-card,.slide.active .flow-step,
+.slide.active .toc-item,.slide.active .chart-panel{
+  animation:fadeInUp .55s cubic-bezier(.22,1,.36,1) both}
+.slide.active .card:nth-child(1),.slide.active .stat-box:nth-child(1),.slide.active .flow-step:nth-child(1){animation-delay:.04s}
+.slide.active .card:nth-child(2),.slide.active .stat-box:nth-child(2),.slide.active .flow-step:nth-child(3){animation-delay:.10s}
+.slide.active .card:nth-child(3),.slide.active .stat-box:nth-child(3),.slide.active .flow-step:nth-child(5){animation-delay:.16s}
+.slide.active .card:nth-child(4),.slide.active .stat-box:nth-child(4),.slide.active .flow-step:nth-child(7){animation-delay:.22s}
+.slide.active .card:nth-child(5),.slide.active .flow-step:nth-child(9){animation-delay:.28s}
+.slide.active .card:nth-child(6){animation-delay:.34s}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media(max-width:1080px){
+  .toc{grid-template-columns:1fr}
+  .three-col{grid-template-columns:1fr 1fr}
 }
-
-/* ========== ANIMATIONS ========== */
-@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-
-.slide.active .card,.slide.active .stat-box,.slide.active .arch-layer,.slide.active .db-card,.slide.active .flow-step{animation:fadeInUp .6s cubic-bezier(.22,1,.36,1) both}
-.slide.active .card:nth-child(1),.slide.active .stat-box:nth-child(1){animation-delay:.05s}
-.slide.active .card:nth-child(2),.slide.active .stat-box:nth-child(2){animation-delay:.12s}
-.slide.active .card:nth-child(3),.slide.active .stat-box:nth-child(3){animation-delay:.19s}
-.slide.active .card:nth-child(4),.slide.active .stat-box:nth-child(4){animation-delay:.26s}
-.slide.active .card:nth-child(5){animation-delay:.33s}
-.slide.active .card:nth-child(6){animation-delay:.4s}
-
-/* Pulse dot on timer */
-.timer::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:#34d399;margin-right:8px;animation:pulse 2s ease-in-out infinite;box-shadow:0 0 8px rgba(52,211,153,.5)}
+@media(max-width:900px){
+  .two-col,.db-cards,.chart-pair{grid-template-columns:1fr}
+  .flow-steps{flex-direction:column;gap:0}
+  .flow-arrow{flex:0 0 26px;transform:rotate(90deg)}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .slide{padding:26px 20px 84px}
+  .cover-slide h1{font-size:36px}
+  .section-slide h2{font-size:30px}
+  .content-slide h2{font-size:23px}
+  .nav{padding:7px 13px;gap:8px}
+  .nav .dots-row{display:none}
+  .nav .chapter-label{display:none}
+  .formula-row{grid-template-columns:1fr}
+  .formula-name{border-right:none;border-bottom:1px solid rgba(255,255,255,.05)}
+}
 </style>
 </head>
 <body>
+
+<!-- ============================================================
+     INLINE SVG ICON SPRITE
+     ============================================================ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.6"/><rect x="14" y="3" width="7" height="5" rx="1.6"/><rect x="14" y="11" width="7" height="10" rx="1.6"/><rect x="3" y="15" width="7" height="6" rx="1.6"/></symbol>
+  <symbol id="i-tags" viewBox="0 0 24 24"><path d="M4 4h7l9 9-7 7-9-9V4z"/><circle cx="8.2" cy="8.2" r="1.5"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M15.5 3.6l4.9 4.9L8 20H3.5v-4.5z"/><path d="M13 6.1l4.9 4.9"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 5.5v15"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V11"/><path d="M10 20V4"/><path d="M16 20v-6"/><path d="M21.5 20h-19"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.6v3M12 18.4v3M21.4 12h-3M5.6 12h-3M18.6 5.4l-2.1 2.1M7.5 16.5l-2.1 2.1M18.6 18.6l-2.1-2.1M7.5 7.5L5.4 5.4"/></symbol>
+  <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7.5" ry="2.8"/><path d="M4.5 6v12c0 1.55 3.35 2.8 7.5 2.8s7.5-1.25 7.5-2.8V6"/><path d="M4.5 12c0 1.55 3.35 2.8 7.5 2.8s7.5-1.25 7.5-2.8"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.2" y="10.4" width="15.6" height="10.4" rx="2.6"/><path d="M8 10.4V7.6a4 4 0 0 1 8 0v2.8"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M11 3l1.8 4.9L17.6 9.7l-4.8 1.8L11 16.4 9.2 11.5 4.4 9.7l4.8-1.8z"/><path d="M18 14.6l.75 2.05 2.05.75-2.05.75L18 20.2l-.75-2.05-2.05-.75 2.05-.75z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.2l8 3v5.9c0 4.9-3.4 8.1-8 8.9-4.6-.8-8-4-8-8.9V6.2z"/><path d="M9 11.9l2.2 2.2 4.3-4.4"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="M8.5 8L4 12l4.5 4"/><path d="M15.5 8L20 12l-4.5 4"/><path d="M13.6 4.8l-3.2 14.4"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9.2" cy="8" r="3.4"/><path d="M2.8 20c0-3.5 2.9-5.9 6.4-5.9s6.4 2.4 6.4 5.9"/><path d="M15.8 5.3a3.4 3.4 0 0 1 0 6.5"/><path d="M17.6 14.3c2 .8 3.6 2.8 3.6 5.7"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="4.4"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-warning" viewBox="0 0 24 24"><path d="M12 4.2l9 15.8H3z"/><path d="M12 10v4.4"/><circle cx="12" cy="17.2" r=".9" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 16.4l5-5 3.4 3.4L21 5.4"/><path d="M21 5.4h-5.2"/><path d="M21 5.4v5.2"/></symbol>
+  <symbol id="i-pie" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><path d="M12 3.6v16.8"/><path d="M12 12l7.1 4.4"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3.2s4.8 4 4.8 8.2a4.8 4.8 0 0 1-9.6 0C7.2 8.8 9.2 7.4 9.2 7.4s.5 1.9 1.4 2.4c1-.9 1.4-3.2 1.4-6.6z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.4" y="5" width="17.2" height="16" rx="2.6"/><path d="M3.4 10h17.2"/><path d="M8 3.2v3.6M16 3.2v3.6"/></symbol>
+  <symbol id="i-flow" viewBox="0 0 24 24"><path d="M3.4 6.6h4.2c3.8 0 3.4 5.4 7.2 5.4h5.8"/><path d="M3.4 12h6.4c3.8 0 3.4 0 6.6 0h4.2"/><path d="M3.4 17.4h4.2c3.8 0 3.4-5.4 7.2-5.4h5.8"/></symbol>
+  <symbol id="i-radar" viewBox="0 0 24 24"><polygon points="12,3.2 20.2,9.6 16.8,19 7.2,19 3.8,9.6"/><polygon points="12,7.2 17,10.9 15,16.1 9,16.1 7,10.9"/></symbol>
+  <symbol id="i-pdf" viewBox="0 0 24 24"><path d="M14 3H7.2A2.2 2.2 0 0 0 5 5.2v13.6A2.2 2.2 0 0 0 7.2 21h9.6a2.2 2.2 0 0 0 2.2-2.2V8z"/><path d="M14 3v5h5"/><path d="M8.4 17.4v-4.6h1.7a1.7 1.7 0 0 1 0 3.4H8.4"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7.4 18.8h9.4a3.9 3.9 0 0 0 .3-7.8A5.9 5.9 0 0 0 6 10.4a4.2 4.2 0 0 0 1.4 8.4z"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v4.6M15 3v4.6"/><path d="M6.6 7.6h10.8v3.1a5.4 5.4 0 0 1-10.8 0z"/><path d="M12 16.1V21"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M4.6 12.6l4.8 4.8L19.4 6.6"/></symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2.2"/><path d="M10 3.2v3.8M14 3.2v3.8M10 17v3.8M14 17v3.8M3.2 10h3.8M3.2 14h3.8M17 10h3.8M17 14h3.8"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.2l8.8 4.9-8.8 4.9-8.8-4.9z"/><path d="M3.2 13.1l8.8 4.9 8.8-4.9"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><path d="M12 7v5.3l3.4 2"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4.2v4.6h-4.6"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 3H7.2A2.2 2.2 0 0 0 5 5.2v13.6A2.2 2.2 0 0 0 7.2 21h9.6a2.2 2.2 0 0 0 2.2-2.2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 16.6h4"/></symbol>
+  <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 4.4v15.4"/><path d="M5.2 8.2h13.6"/><path d="M5.2 8.2L2.8 14a2.9 2.9 0 0 0 4.8 0z"/><path d="M18.8 8.2l-2.4 5.8a2.9 2.9 0 0 0 4.8 0z"/><circle cx="12" cy="4.4" r="1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M13.4 6.4L19 12l-5.6 5.6"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2.6" y="4" width="18.8" height="13" rx="2.2"/><path d="M8.6 20.8h6.8M12 17v3.8"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9.2 17.4a6 6 0 1 1 5.6 0v2.2H9.2z"/><path d="M9.6 21.2h4.8"/></symbol>
+</svg>
 
 <div class="progress" id="progress"></div>
 <div class="timer" id="timer">00:00</div>
 
 <div class="slide-container" id="slides">
 
-<!-- ====== SLIDE 0: 封面 ====== -->
-<div class="slide cover-slide active" data-slide="0">
+<!-- ============================ 0 · 封面 ============================ -->
+<div class="slide cover-slide active" data-slide="0" data-chapter="封面">
 <div class="slide-content">
-<div class="cover-badge">「 数智经管 · 创见未来 」创意作品设计大赛</div>
-<h1>InEx_System v2.0</h1>
-<div class="subtitle">个人收支管理系统</div>
-<div class="meta">
-</div>
+  <div class="cover-badge"><svg class="ic" style="font-size:16px"><use href="#i-target"/></svg>数智经管 · 创见未来 · 创意作品设计大赛</div>
+  <h1>InEx_System v2.0</h1>
+  <div class="subtitle">面向个人与小微主体的智能收支管理系统</div>
+  <div class="cover-meta">
+    <span>PyQt5 · Python 3.9+</span>
+    <span>SQLite / MySQL 8.0 / Sybase SA 9</span>
+    <span>DeepSeek 智能分析</span>
+  </div>
 </div>
 </div>
 
-<!-- ====== SLIDE 1: 目录 ====== -->
-<div class="slide section-slide" data-slide="1">
+<!-- ============================ 1 · 目录 ============================ -->
+<div class="slide section-slide" data-slide="1" data-chapter="目录">
 <div class="slide-content">
-<div class="section-num">01</div>
-<h2>作品演示</h2>
-<div class="section-desc" style="margin-top:48px;line-height:3;font-size:21px">
-项目介绍 → 技术架构与多数据库支持 → 核心功能与数据分析<br>
- → AI分析与预算预警 → 总结展望
-</div>
+  <h2>汇报框架</h2>
+  <div class="section-rule"></div>
+  <div class="toc">
+    <div class="toc-item" data-goto="2">
+      <span class="toc-num">·</span>
+      <span><span class="toc-txt">问题定义与解决方案</span><span class="toc-sub">需求痛点 · 设计定位 · 总体指标</span></span>
+    </div>
+    <div class="toc-item" data-goto="3">
+      <span class="toc-num">01</span>
+      <span><span class="toc-txt">系统架构设计</span><span class="toc-sub">MVC 分层 · 多数据库抽象层</span></span>
+    </div>
+    <div class="toc-item" data-goto="6">
+      <span class="toc-num">02</span>
+      <span><span class="toc-txt">数据模型与功能实现</span><span class="toc-sub">12 张数据表 · 9 个功能页 · 数据闭环</span></span>
+    </div>
+    <div class="toc-item" data-goto="10">
+      <span class="toc-num">03</span>
+      <span><span class="toc-txt">分析引擎与智能决策</span><span class="toc-sub">财务指标体系 · 可视化 · AI 双引擎</span></span>
+    </div>
+    <div class="toc-item" data-goto="14">
+      <span class="toc-num">04</span>
+      <span><span class="toc-txt">安全、工程与价值</span><span class="toc-sub">预算预警 · 数据安全 · 应用价值</span></span>
+    </div>
+    <div class="toc-item" data-goto="19">
+      <span class="toc-num">05</span>
+      <span><span class="toc-txt">实证总结与展望</span><span class="toc-sub">工程度量 · 迭代规划</span></span>
+    </div>
+  </div>
 </div>
 </div>
 
-<!-- ====== SLIDE 2: 项目背景 ====== -->
-<div class="slide content-slide" data-slide="2">
+<!-- ============================ 2 · 问题定义 ============================ -->
+<div class="slide content-slide" data-slide="2" data-chapter="问题定义与解决方案">
 <div class="slide-content">
-<h2>项目背景与痛点</h2>
-<div class="two-col" style="margin-top:18px">
-<div>
-<h3>现状痛点</h3>
-<ul class="feature-list">
-<li><span class="li-icon"></span>个人及小商户收支记录零散，Excel 管理效率低、易出错</li>
-<li><span class="li-icon"></span>缺乏直观的数据可视化工具，难以发现消费规律</li>
-<li><span class="li-icon"></span>市面记账软件要么功能单一（仅记录），要么过于复杂（财务ERP）</li>
-<li><span class="li-icon"></span>数据隐私与本地化存储需求被普遍忽视</li>
-<li><span class="li-icon"></span>缺少智能化消费分析建议，用户难以优化财务结构</li>
-</ul>
-</div>
-<div>
-<h3>我们的方案</h3>
-<div class="highlight">
-<p><b>InEx_System</b> —— 基于 PyQt5 构建的跨数据库桌面端收支管理系统，集<b>记账、分析、AI 建议</b>于一体，以"专业财务内核 + 智能分析外脑 + 极简操作体验"三位一体，兼顾易用性与企业级能力。</p>
-</div>
-<div class="stats-row" style="margin-top:18px">
-<div class="stat-box"><div class="stat-val" style="color:#818cf8">3</div><div class="stat-label">数据库引擎</div></div>
-<div class="stat-box"><div class="stat-val" style="color:#34d399">9</div><div class="stat-label">功能模块</div></div>
-<div class="stat-box"><div class="stat-val" style="color:#fbbf24">5</div><div class="stat-label">导出格式</div></div>
-<div class="stat-box"><div class="stat-val" style="color:#a78bfa">AI</div><div class="stat-label">智能分析</div></div>
-</div>
-</div>
-</div>
+  <h2>问题定义与解决方案<span class="h2-sub">Problem Definition &amp; Solution Positioning</span></h2>
+  <div class="h2-bar"></div>
+  <div class="two-col">
+    <div>
+      <h3><svg class="ic"><use href="#i-warning"/></svg>五个真实痛点</h3>
+      <ul class="feature-list">
+        <li><svg class="ic li-icon"><use href="#i-doc"/></svg><span>Excel 手工台账<b>口径易错、无法追溯</b></span></li>
+        <li><svg class="ic li-icon"><use href="#i-chart"/></svg><span>缺统计分析，<b>消费规律埋没于流水明细</b></span></li>
+        <li><svg class="ic li-icon"><use href="#i-scale"/></svg><span>工具两极分化：<b>轻量 App 只管录入</b>，ERP 过重</span></li>
+        <li><svg class="ic li-icon"><use href="#i-lock"/></svg><span>云端产品<b>数据外置</b>，本地化诉求被忽视</span></li>
+        <li><svg class="ic li-icon"><use href="#i-bulb"/></svg><span>止步于"记录"，<b>缺可执行优化建议</b></span></li>
+      </ul>
+    </div>
+    <div>
+      <h3><svg class="ic"><use href="#i-target"/></svg>方案定位</h3>
+      <div class="highlight">
+        <p><b>专业财务内核 + 智能分析外脑 + 极简操作体验</b>，
+        打通 <b>记账 → 流水 → 报表 → 分析 → 建议</b> 闭环，
+        在个人易用性与企业级数据工程能力之间取得平衡。</p>
+      </div>
+      <div class="stats-row" style="margin-top:14px">
+        <div class="stat-box"><div class="stat-val" style="color:#818cf8">3</div><div class="stat-label">异构数据库后端</div><div class="stat-hint">一套业务代码</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:#34d399">9</div><div class="stat-label">功能模块页面</div><div class="stat-hint">QStackedWidget 路由</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:#fbbf24">12</div><div class="stat-label">规范化数据表</div><div class="stat-hint">5 类账务模型</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:#a78bfa">27.9k</div><div class="stat-label">Python 代码行</div><div class="stat-hint">49 个模块</div></div>
+      </div>
+    </div>
+  </div>
 </div>
 </div>
 
-<!-- ====== SLIDE 3: 技术架构 ====== -->
-<div class="slide content-slide" data-slide="3">
+<!-- ============================ 3 · 章节 01 ============================ -->
+<div class="slide section-slide" data-slide="3" data-chapter="01 系统架构设计">
 <div class="slide-content">
-<h2>技术架构总览</h2>
-<div class="arch-stack">
-<div class="arch-layer">
-<span class="layer-label" style="background:linear-gradient(135deg,#a78bfa,#8b5cf6)">表现层</span>
-<span class="layer-content"><b>PyQt5 GUI</b> — 主窗口框架 + QStackedWidget 页面路由 + 侧边栏导航 + 完整菜单栏体系 + QSplashScreen 启动画面 + Toast 消息组件</span>
-</div>
-<div class="arch-layer">
-<span class="layer-label" style="background:linear-gradient(135deg,#818cf8,#667eea)">业务层</span>
-<span class="layer-content"><b>Python 3.7+</b> — EnhancedDataManager 数据总控 / 收支 CRUD / 流水账引擎 / 月报生成器 / BudgetManager 预算管理 / SpendingAnalyzer AI 分析器</span>
-</div>
-<div class="arch-layer">
-<span class="layer-label" style="background:linear-gradient(135deg,#60a5fa,#3b82f6)">数据层</span>
-<span class="layer-content"><b>DatabaseBackend 抽象层 (策略模式)</b> — SQLite 零配置直连 | MySQL 8.0 + DBUtils 连接池 | Sybase ASA 9 (DSN / DSN-less / 文件直连)</span>
-</div>
-<div class="arch-layer">
-<span class="layer-label" style="background:linear-gradient(135deg,#34d399,#10b981)">工具层</span>
-<span class="layer-content"><b>15+ 核心依赖</b> — pandas · numpy · matplotlib · seaborn · scipy · reportlab · openpyxl · cryptography · requests (DeepSeek API) · DBUtils</span>
-</div>
-</div>
-<div class="tech-tags" style="margin-top:22px">
-<span class="tech-tag">PyQt5</span><span class="tech-tag green">Python</span><span class="tech-tag orange">SQLite</span><span class="tech-tag purple">MySQL 8.0</span><span class="tech-tag red">Sybase</span><span class="tech-tag">matplotlib</span><span class="tech-tag green">seaborn</span><span class="tech-tag orange">pandas</span><span class="tech-tag purple">scipy</span><span class="tech-tag red">cryptography</span><span class="tech-tag">DeepSeek API</span>
-</div>
+  <div class="section-num">01</div>
+  <h2>系统架构设计</h2>
+  <div class="section-rule"></div>
+  <div class="section-desc">
+    MVC 分层架构 · 多数据库抽象层<br>
+    策略模式 + 工厂模式 · SQL 方言自动适配
+  </div>
 </div>
 </div>
 
-<!-- ====== SLIDE 4: 多数据库支持 ====== -->
-<div class="slide content-slide" data-slide="4">
+<!-- ============================ 4 · 技术架构总览 ============================ -->
+<div class="slide content-slide" data-slide="4" data-chapter="01 系统架构设计">
 <div class="slide-content">
-<h2>核心亮点：多数据库架构</h2>
-<p style="color:#8b85a5;margin-bottom:20px">基于<b>策略模式 + 工厂模式</b>实现 DatabaseBackend 抽象基类，一套业务代码适配三种异构数据库，SQL 方言自动适配</p>
-<div class="db-cards">
-<div class="db-card">
-<span class="db-icon"></span>
-<div class="db-name">SQLite</div>
-<div class="db-features">零配置开箱即用<br>单文件本地存储<br>适合个人独立使用<br>无需安装服务端</div>
-</div>
-<div class="db-card">
-<span class="db-icon"></span>
-<div class="db-name">MySQL 8.0</div>
-<div class="db-features">DBUtils 连接池 5~15 连接<br>自动重连 + 心跳检测<br>慢查询监控 (>1s 告警)<br>适合多用户 / 高并发</div>
-</div>
-<div class="db-card">
-<span class="db-icon"></span>
-<div class="db-name">Sybase ASA 9</div>
-<div class="db-features">三种连接方式自动切换<br>DSN / DSN-less / 文件直连<br>驱动自动检测 + 安装指引<br>企业级错误中文精准提示</div>
-</div>
-</div>
-<div class="highlight" style="margin-top:22px">
-<p><b>架构价值：</b>统一 EnhancedDataManager 对外接口，所有业务代码零感知底层差异。内置 SQL 兼容适配（SQLite strftime ↔ MySQL/Sybase DATE_FORMAT）、事务管理、连接池状态监控。扩展新数据库只需新增一个 Backend 子类。</p>
-</div>
+  <h2>技术架构总览<span class="h2-sub">Four-Layer Architecture · 表现层 / 控制层 / 数据层 / 支撑层</span></h2>
+  <div class="h2-bar"></div>
+
+  <svg class="diagram" viewBox="0 0 1000 352" role="img" aria-label="四层架构图">
+    <defs>
+      <linearGradient id="gV" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient>
+      <linearGradient id="gI" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#818cf8"/><stop offset="1" stop-color="#6366f1"/></linearGradient>
+      <linearGradient id="gB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#60a5fa"/><stop offset="1" stop-color="#3b82f6"/></linearGradient>
+      <linearGradient id="gG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#10b981"/></linearGradient>
+    </defs>
+
+    <!-- layer 1 -->
+    <rect x="8" y="8" width="106" height="72" rx="13" fill="url(#gV)"/>
+    <text x="61" y="52" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">表现层</text>
+    <rect x="126" y="8" width="866" height="72" rx="13" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.07)"/>
+    <text x="146" y="36" font-size="14.5" font-weight="700" fill="#e8e6f2">PyQt5 5.15 桌面 GUI（HighDPI 适配）</text>
+    <text x="146" y="61" font-size="12.5" fill="#8b85a5">main_window 1272 行 · login_dialog 852 行 · styles 831 行 · 9 个功能页面 · 全局搜索 / 数据库连接 / 数据管理对话框 · QSplashScreen · Toast</text>
+    <!-- arrow -->
+    <path d="M61 84v13" stroke="rgba(139,92,246,.5)" stroke-width="1.6"/><path d="M56.5 92.5L61 98l4.5-5.5" fill="rgba(139,92,246,.5)" stroke="none"/>
+
+    <!-- layer 2 -->
+    <rect x="8" y="102" width="106" height="72" rx="13" fill="url(#gI)"/>
+    <text x="61" y="146" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">控制层</text>
+    <rect x="126" y="102" width="866" height="72" rx="13" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.07)"/>
+    <text x="146" y="130" font-size="14.5" font-weight="700" fill="#e8e6f2">models/ + utils/ 业务内核（MVC 的 Controller）</text>
+    <text x="146" y="155" font-size="12.5" fill="#8b85a5">db_backend 2098 行 · pdf_report_generator 1862 行 · ai_analyzer 522 行 · budget_manager 561 行 · data_analyzer 298 行 · sql_dialect 246 行</text>
+    <path d="M61 178v13" stroke="rgba(99,102,241,.5)" stroke-width="1.6"/><path d="M56.5 186.5L61 192l4.5-5.5" fill="rgba(99,102,241,.5)" stroke="none"/>
+
+    <!-- layer 3 -->
+    <rect x="8" y="196" width="106" height="72" rx="13" fill="url(#gB)"/>
+    <text x="61" y="240" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">数据层</text>
+    <rect x="126" y="196" width="866" height="72" rx="13" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.07)"/>
+    <text x="146" y="224" font-size="14.5" font-weight="700" fill="#e8e6f2">DatabaseBackend 抽象基类（策略模式 + 工厂模式）</text>
+    <text x="146" y="249" font-size="12.5" fill="#8b85a5">SQLite 3（内置连接池） · MySQL 8.0（pymysql + DBUtils PooledDB） · Sybase SQL Anywhere 9（pyodbc / sqlanydb）</text>
+    <path d="M61 272v13" stroke="rgba(59,130,246,.5)" stroke-width="1.6"/><path d="M56.5 280.5L61 286l4.5-5.5" fill="rgba(59,130,246,.5)" stroke="none"/>
+
+    <!-- layer 4 -->
+    <rect x="8" y="290" width="106" height="56" rx="13" fill="url(#gG)"/>
+    <text x="61" y="323" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">支撑层</text>
+    <rect x="126" y="290" width="866" height="56" rx="13" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.07)"/>
+    <text x="146" y="313" font-size="14.5" font-weight="700" fill="#e8e6f2">17 个直接依赖 · 分析与安全基础设施</text>
+    <text x="146" y="334" font-size="12.5" fill="#8b85a5">pandas · numpy · scipy · matplotlib · seaborn · reportlab · openpyxl · cryptography · bcrypt · requests · DBUtils · PyInstaller</text>
+  </svg>
+
+  <div style="margin-top:16px">
+    <h3 style="margin:0 0 10px"><svg class="ic"><use href="#i-chart"/></svg>分层代码规模实测（27,885 行 / 49 模块）</h3>
+    <div class="scale-list">
+      <div class="scale-row">
+        <span class="scale-name">ui/ 表现层</span>
+        <span class="scale-track"><span class="scale-fill" style="width:100%;background:linear-gradient(90deg,#8b5cf6,#a78bfa)"></span></span>
+        <span class="scale-num">18,248 <em>65.5%</em></span>
+      </div>
+      <div class="scale-row">
+        <span class="scale-name">utils/ 工具层</span>
+        <span class="scale-track"><span class="scale-fill" style="width:32.4%;background:linear-gradient(90deg,#6366f1,#818cf8)"></span></span>
+        <span class="scale-num">5,906 <em>21.2%</em></span>
+      </div>
+      <div class="scale-row">
+        <span class="scale-name">models/ 数据层</span>
+        <span class="scale-track"><span class="scale-fill" style="width:17.4%;background:linear-gradient(90deg,#3b82f6,#60a5fa)"></span></span>
+        <span class="scale-num">3,176 <em>11.4%</em></span>
+      </div>
+      <div class="scale-row">
+        <span class="scale-name">main / build</span>
+        <span class="scale-track"><span class="scale-fill" style="width:3%;background:linear-gradient(90deg,#10b981,#34d399)"></span></span>
+        <span class="scale-num">555 <em>2.0%</em></span>
+      </div>
+    </div>
+  </div>
 </div>
 </div>
 
-<!-- ====== SLIDE 5: 核心功能全景 ====== -->
-<div class="slide content-slide" data-slide="5">
+<!-- ============================ 5 · 多数据库架构 ============================ -->
+<div class="slide content-slide" data-slide="5" data-chapter="01 系统架构设计">
 <div class="slide-content">
-<h2>核心功能全景</h2>
-<div class="card-grid">
-<div class="card purple">
-<span class="card-icon"></span><div class="card-title">首页数据概况</div>
-<div class="card-desc">四大指标卡片（总余额/总收入/总支出/净结余）、预算状态、收支双轴趋势图、分类占比饼图、最近交易列表</div>
-</div>
-<div class="card green">
-<span class="card-icon"></span><div class="card-title">分类管理</div>
-<div class="card-desc">收入类型 / 支出类型 / 支付方式三大分类体系，完整 CRUD 操作，支持灵活扩展自定义类型</div>
-</div>
-<div class="card orange">
-<span class="card-icon"></span><div class="card-title">收支记账</div>
-<div class="card-desc">收入记账 & 支出记账独立管理页面，多条件组合筛选（日期/金额/类型/支付方式），编辑删除一键操作</div>
-</div>
-<div class="card red">
-<span class="card-icon"></span><div class="card-title">流水账 & 月报</div>
-<div class="card-desc">自动合并收支生成流水账，实时逐笔计算余额；按月汇总生成收支报表，按支付方式分组统计</div>
-</div>
-<div class="card blue">
-<span class="card-icon"></span><div class="card-title">统计分析</div>
-<div class="card-desc">按日/月/年自由切换维度，双轴组合图表（柱状+折线），收入/支出/支付三大饼图占比分析</div>
-</div>
-<div class="card cyan">
-<span class="card-icon"></span><div class="card-title">系统设置</div>
-<div class="card-desc">数据库配置切换、API Key 加密管理、数据备份恢复、日志分级管理、深浅色主题切换、多账套管理</div>
-</div>
-</div>
+  <h2>核心架构亮点：多数据库抽象层<span class="h2-sub">Strategy + Factory Pattern · 一套业务代码驱动三种异构数据库</span></h2>
+  <div class="h2-bar"></div>
+  <p class="lead">业务层只依赖 <code>DatabaseBackend</code> 抽象接口，<code>sql_dialect.py</code> 完成方言映射
+  （<code>strftime</code> ↔ <code>DATE_FORMAT</code>），底层差异对上层完全透明。</p>
+
+  <svg class="diagram" viewBox="0 0 1000 124" role="img" aria-label="多数据库抽象层结构" style="margin:10px 0 4px">
+    <rect x="330" y="2" width="340" height="30" rx="8" fill="rgba(139,92,246,.16)" stroke="rgba(167,139,250,.35)"/>
+    <text x="500" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#ddd8f2">业务层 · EnhancedDataManager 统一接口</text>
+    <path d="M500 34v8" stroke="rgba(167,139,250,.55)" stroke-width="1.5"/>
+    <path d="M495.5 38L500 44l4.5-6" fill="rgba(167,139,250,.55)" stroke="none"/>
+
+    <rect x="285" y="46" width="430" height="34" rx="9" fill="rgba(255,255,255,.03)"
+          stroke="rgba(96,165,250,.45)" stroke-dasharray="5 4"/>
+    <text x="500" y="61" text-anchor="middle" font-size="13" font-weight="700" fill="#93c5fd">DatabaseBackend（抽象基类）</text>
+    <text x="500" y="75" text-anchor="middle" font-size="11" fill="#7d7699">sql_dialect 方言适配 · 事务 · 连接健康检测</text>
+
+    <path d="M375 82v8" stroke="rgba(96,165,250,.45)" stroke-width="1.4"/>
+    <path d="M500 82v8" stroke="rgba(96,165,250,.45)" stroke-width="1.4"/>
+    <path d="M625 82v8" stroke="rgba(96,165,250,.45)" stroke-width="1.4"/>
+    <path d="M370.5 86L375 92l4.5-6" fill="rgba(96,165,250,.45)" stroke="none"/>
+    <path d="M495.5 86L500 92l4.5-6" fill="rgba(96,165,250,.45)" stroke="none"/>
+    <path d="M620.5 86L625 92l4.5-6" fill="rgba(96,165,250,.45)" stroke="none"/>
+
+    <rect x="100" y="94" width="250" height="26" rx="7" fill="rgba(59,130,246,.13)" stroke="rgba(59,130,246,.35)"/>
+    <text x="225" y="112" text-anchor="middle" font-size="12.5" fill="#93c5fd">SQLiteBackend</text>
+    <rect x="375" y="94" width="250" height="26" rx="7" fill="rgba(245,158,11,.13)" stroke="rgba(245,158,11,.35)"/>
+    <text x="500" y="112" text-anchor="middle" font-size="12.5" fill="#fcd34d">MySQLBackend</text>
+    <rect x="650" y="94" width="250" height="26" rx="7" fill="rgba(239,68,68,.13)" stroke="rgba(239,68,68,.35)"/>
+    <text x="775" y="112" text-anchor="middle" font-size="12.5" fill="#fca5a5">SybaseBackend</text>
+  </svg>
+
+  <div class="db-cards">
+    <div class="db-card">
+      <div class="db-head">
+        <span class="db-icon-wrap" style="background:rgba(59,130,246,.16);color:#93c5fd"><svg class="ic"><use href="#i-db"/></svg></span>
+        <span><span class="db-name">SQLite 3</span><span class="db-role">个人单机 · 零配置</span></span>
+      </div>
+      <ul class="db-params">
+        <li><span class="k">部署形态</span><span class="v">单文件本地库</span></li>
+        <li><span class="k">连接方式</span><span class="v">内置连接池</span></li>
+        <li><span class="k">适用场景</span><span class="v">个人 / 离线</span></li>
+        <li><span class="k">运维成本</span><span class="v">免安装服务端</span></li>
+      </ul>
+    </div>
+    <div class="db-card">
+      <div class="db-head">
+        <span class="db-icon-wrap" style="background:rgba(245,158,11,.16);color:#fcd34d"><svg class="ic"><use href="#i-cloud"/></svg></span>
+        <span><span class="db-name">MySQL 8.0</span><span class="db-role">多用户 · 高并发</span></span>
+      </div>
+      <ul class="db-params">
+        <li><span class="k">连接池</span><span class="v">PooledDB 5+10</span></li>
+        <li><span class="k">失效重试</span><span class="v">3 次 · 自动重连</span></li>
+        <li><span class="k">慢查询阈值</span><span class="v">&gt; 1000 ms 告警</span></li>
+        <li><span class="k">可观测性</span><span class="v">查询计数 / 耗时统计</span></li>
+      </ul>
+    </div>
+    <div class="db-card">
+      <div class="db-head">
+        <span class="db-icon-wrap" style="background:rgba(239,68,68,.16);color:#fca5a5"><svg class="ic"><use href="#i-plug"/></svg></span>
+        <span><span class="db-name">Sybase SA 9</span><span class="db-role">企业级 · 兼容旧系统</span></span>
+      </div>
+      <ul class="db-params">
+        <li><span class="k">连接策略</span><span class="v">4 级自动降级</span></li>
+        <li><span class="k">降级链路</span><span class="v">sqlanydb→DSN→…</span></li>
+        <li><span class="k">驱动缺失</span><span class="v">内置安装指引</span></li>
+        <li><span class="k">错误提示</span><span class="v">错误码→中文方案</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="highlight" style="margin-top:18px">
+    <p><b>架构价值：</b>新增一种数据库只需增加一个 Backend 子类，业务代码零改动——符合开闭原则（OCP）。</p>
+  </div>
 </div>
 </div>
 
-<!-- ====== SLIDE 6: 收支记账数据链路 ====== -->
-<div class="slide content-slide" data-slide="6">
+<!-- ============================ 6 · 章节 02 ============================ -->
+<div class="slide section-slide" data-slide="6" data-chapter="02 数据模型与功能实现">
 <div class="slide-content">
-<h2>收支记账 — 完整数据链路</h2>
-<div class="flow-steps">
-<div class="flow-step"><div class="step-num">1</div><div class="step-title">录入交易</div><div class="step-desc">日期 / 类别选择<br>金额输入 / 支付方式<br>可选备注说明</div></div>
-<div class="flow-arrow">→</div>
-<div class="flow-step"><div class="step-num">2</div><div class="step-title">持久存储</div><div class="step-desc">写入 sz_sheet_sr<br>或 sz_sheet_zc 表<br>自动生成唯一单据号</div></div>
-<div class="flow-arrow">→</div>
-<div class="flow-step"><div class="step-num">3</div><div class="step-title">流水账生成</div><div class="step-desc">UNION ALL 合并收支<br>按日期 + 序号排序<br>逐笔滚动计算余额</div></div>
-<div class="flow-arrow">→</div>
-<div class="flow-step"><div class="step-num">4</div><div class="step-title">月报汇总</div><div class="step-desc">按支付方式分组<br>统计期初/收入/支出<br>计算期末余额</div></div>
-<div class="flow-arrow">→</div>
-<div class="flow-step"><div class="step-num">5</div><div class="step-title">分析输出</div><div class="step-desc">趋势图 / 饼图<br>AI 智能建议<br>多格式导出分享</div></div>
-</div>
-<div class="highlight" style="margin-top:22px">
-<p><b>完整数据表结构：</b>sz_c_sr (收入类型) · sz_c_zc (支出类型) · sz_c_zf (支付方式) · sz_sheet_sr (收入记录) · sz_sheet_zc (支出记录) · sz_table_lsz (流水账) · sz_report_srzc (月度报表) · sz_d_zt (账套信息) — 遵循财务编码规范的专业数据模型</p>
-</div>
+  <div class="section-num">02</div>
+  <h2>数据模型与功能实现</h2>
+  <div class="section-rule"></div>
+  <div class="section-desc">
+    12 张规范化数据表 · 9 个功能模块页面<br>
+    录入 → 存储 → 流水账 → 月报 → 分析 五步闭环
+  </div>
 </div>
 </div>
 
-<!-- ====== SLIDE 7: 数据可视化 ====== -->
-<div class="slide content-slide" data-slide="7">
+<!-- ============================ 7 · 数据模型 ============================ -->
+<div class="slide content-slide" data-slide="7" data-chapter="02 数据模型与功能实现">
 <div class="slide-content">
-<h2>多维度数据可视化分析</h2>
-<div class="two-col">
-<div>
-<h3>时间维度趋势分析</h3>
-<ul class="feature-list">
-<li><span class="li-icon"></span><b>按日 / 按月 / 按年</b> 三种聚合粒度自由切换</li>
-<li><span class="li-icon"></span><b>双轴组合图表</b>：柱状图 (收支金额) + 折线图 (净结余)</li>
-<li><span class="li-icon"></span>快捷时间筛选：<b>全部历史 / 本周 / 本月 / 本年</b></li>
-<li><span class="li-icon"></span>智能标签密度控制：数据 ≤15 全显示，>30 间隔显示</li>
-<li><span class="li-icon"></span>无数据时段友好提示，引导用户调整筛选条件</li>
-</ul>
-</div>
-<div>
-<h3>分类占比分析</h3>
-<ul class="feature-list">
-<li><span class="li-icon"></span><b>收入来源占比饼图</b> — 收入结构一目了然</li>
-<li><span class="li-icon"></span><b>消费结构占比饼图</b> — 支出去向清晰呈现</li>
-<li><span class="li-icon"></span><b>支付方式占比饼图</b> — 支付习惯量化分析</li>
-<li><span class="li-icon"></span>Tab 标签页切换，图表与文字数据联动</li>
-<li><span class="li-icon"></span>自动计算百分比与排名，色彩区分核心指标</li>
-</ul>
-</div>
-</div>
-<div class="tech-tags" style="margin-top:16px">
-<span class="tech-tag">matplotlib</span><span class="tech-tag green">seaborn</span><span class="tech-tag orange">pandas</span><span class="tech-tag purple">numpy</span><span class="tech-tag red">scipy (线性回归)</span>
-</div>
+  <h2>财务数据模型<span class="h2-sub">sz_ 前缀命名 · 仿账务系统编码规范 · 12 张表划分为 5 类</span></h2>
+  <div class="h2-bar"></div>
+  <svg class="diagram" viewBox="0 0 1000 106" role="img" aria-label="数据表血缘关系">
+    <text x="15" y="15" font-size="11" fill="#7d7699">主数据血缘（派生关系）</text>
+    <text x="700" y="15" font-size="11" fill="#7d7699">支撑维度</text>
+
+    <rect x="15" y="24" width="195" height="48" rx="9" fill="rgba(139,92,246,.13)" stroke="rgba(139,92,246,.34)"/>
+    <text x="112" y="45" text-anchor="middle" font-size="13" font-weight="700" fill="#c4b5fd">基础码表 · 3 张</text>
+    <text x="112" y="63" text-anchor="middle" font-size="10" fill="#8b85a5">sz_c_sr / sz_c_zc / sz_c_zf</text>
+    <path d="M214 48h22" stroke="rgba(167,139,250,.55)" stroke-width="1.5"/>
+    <path d="M231 43.5L238 48l-7 4.5" fill="rgba(167,139,250,.55)" stroke="none"/>
+
+    <rect x="240" y="24" width="195" height="48" rx="9" fill="rgba(16,185,129,.13)" stroke="rgba(16,185,129,.34)"/>
+    <text x="337" y="45" text-anchor="middle" font-size="13" font-weight="700" fill="#6ee7b7">业务单据 · 2 张</text>
+    <text x="337" y="63" text-anchor="middle" font-size="10" fill="#8b85a5">sz_sheet_sr / sz_sheet_zc</text>
+    <path d="M439 48h22" stroke="rgba(52,211,153,.55)" stroke-width="1.5"/>
+    <path d="M456 43.5L463 48l-7 4.5" fill="rgba(52,211,153,.55)" stroke="none"/>
+    <text x="450" y="90" text-anchor="middle" font-size="10" fill="#34d399">派生计算</text>
+
+    <rect x="465" y="24" width="195" height="48" rx="9" fill="rgba(59,130,246,.13)" stroke="rgba(59,130,246,.34)"/>
+    <text x="562" y="45" text-anchor="middle" font-size="13" font-weight="700" fill="#93c5fd">会计账簿 · 2 张</text>
+    <text x="562" y="63" text-anchor="middle" font-size="10" fill="#8b85a5">sz_table_lsz / sz_report_srzc</text>
+
+    <rect x="700" y="24" width="140" height="48" rx="9" fill="rgba(245,158,11,.11)" stroke="rgba(245,158,11,.3)"/>
+    <text x="770" y="45" text-anchor="middle" font-size="13" font-weight="700" fill="#fcd34d">控制档案 · 3 张</text>
+    <text x="770" y="63" text-anchor="middle" font-size="10" fill="#8b85a5">预算 · 变更 · 账套</text>
+
+    <rect x="852" y="24" width="133" height="48" rx="9" fill="rgba(239,68,68,.11)" stroke="rgba(239,68,68,.3)"/>
+    <text x="918" y="45" text-anchor="middle" font-size="13" font-weight="700" fill="#fca5a5">系统安全 · 2 张</text>
+    <text x="918" y="63" text-anchor="middle" font-size="10" fill="#8b85a5">用户 · 审计日志</text>
+  </svg>
+
+  <table class="data-table" style="margin-top:10px">
+    <thead><tr><th style="width:14%">分类</th><th style="width:29%">数据表</th><th>职责</th></tr></thead>
+    <tbody>
+      <tr><td><b>基础码表</b></td><td class="mono">sz_c_sr / sz_c_zc / sz_c_zf</td><td>收入 5 类 · 支出 7 类 · 支付 5 类，统一编码保证维度一致</td></tr>
+      <tr><td><b>业务单据</b></td><td class="mono">sz_sheet_sr / sz_sheet_zc</td><td>原始凭证，含单据号 djh、日期、类别、金额、支付方式、摘要</td></tr>
+      <tr><td><b>会计账簿</b></td><td class="mono">sz_table_lsz / sz_report_srzc</td><td>流水账（UNION ALL + 滚动余额 ye）· 月报（期初 / 收支 / 期末）</td></tr>
+      <tr><td><b>控制档案</b></td><td class="mono">sz_budget / _history / sz_d_zt</td><td>月度预算 · 变更留痕 · 账套隔离</td></tr>
+      <tr><td><b>系统安全</b></td><td class="mono">sys_users / sys_audit_log</td><td>认证主体 · 操作审计</td></tr>
+    </tbody>
+  </table>
+  <div class="highlight" style="margin-top:12px">
+    <p><b>设计要点：</b>账簿由单据<b>派生生成而非手工录入</b>，保证"账证相符"；预算表与变更历史分离，形成完整审计链。</p>
+  </div>
 </div>
 </div>
 
-<!-- ====== SLIDE 8: AI 智能分析 ====== -->
-<div class="slide content-slide" data-slide="8">
+<!-- ============================ 8 · 核心功能全景 ============================ -->
+<div class="slide content-slide" data-slide="8" data-chapter="02 数据模型与功能实现">
 <div class="slide-content">
-<h2>AI 智能消费分析引擎</h2>
-<div class="two-col">
-<div>
-<div class="card green" style="margin-bottom:14px">
-<span class="card-icon"></span>
-<div class="card-title">消费习惯深度分析</div>
-<div class="card-desc">Top 5 消费类别排名与占比 · 每月消费趋势判定（线性回归斜率 — 上升 / 下降 / 稳定）· 月均 / 最高 / 最低消费量化</div>
-</div>
-<div class="card orange">
-<span class="card-icon"></span>
-<div class="card-title">异常消费自动检测</div>
-<div class="card-desc">基于统计学方法（均值 + 2σ 阈值），自动筛查异常大额交易，按异常分数降序排列并展示触发原因</div>
-</div>
-</div>
-<div>
-<div class="card purple" style="margin-bottom:14px">
-<span class="card-icon"></span>
-<div class="card-title">DeepSeek AI 集成</div>
-<div class="card-desc">结构化 prompt 将分析数据发送至 DeepSeek 大模型，生成 3~5 条个性化、可执行的理财优化建议</div>
-</div>
-<div class="card red">
-<span class="card-icon"></span>
-<div class="card-title">离线规则引擎降级</div>
-<div class="card-desc">无 API 或网络异常时，自动切换为统计规则引擎——超支警告 · 趋势提醒 · 预算分配建议 · 应急基金建议</div>
-</div>
-</div>
-</div>
-<div class="highlight" style="margin-top:18px">
-<p><b>双引擎架构设计：</b>SpendingAnalyzer 类融合统计分析（scipy 线性回归趋势判断、标准差异常检测）与 LLM 提示工程。API Key 通过 cryptography 库 AES 加密存储，兼顾智能化与安全性。</p>
-</div>
+  <h2>核心功能全景<span class="h2-sub">9 个功能模块页面 · 覆盖账务处理全流程</span></h2>
+  <div class="h2-bar"></div>
+  <div class="card-grid">
+    <div class="card c-purple">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-dashboard"/></svg></span><span class="card-title">首页看板</span></div>
+      <div class="card-desc">四大指标卡 · 预算状态 · 双轴趋势图 · 占比饼图 · 最近交易</div>
+    </div>
+    <div class="card c-green">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-tags"/></svg></span><span class="card-title">分类管理</span></div>
+      <div class="card-desc">三维码表体系，完整 CRUD 与自定义扩展</div>
+    </div>
+    <div class="card c-orange">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-pen"/></svg></span><span class="card-title">收支记账</span></div>
+      <div class="card-desc">收支独立页面 · 多条件筛选 · 批量改删 · 预算联动预警</div>
+    </div>
+    <div class="card c-red">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-book"/></svg></span><span class="card-title">流水账</span></div>
+      <div class="card-desc">自动合并收支，逐笔滚动余额；Excel / CSV / JSON / SQL 互导</div>
+    </div>
+    <div class="card c-blue">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-calendar"/></svg></span><span class="card-title">收支月报</span></div>
+      <div class="card-desc">按月汇总并结转期初，四图表呈现，支持月度导航与账套过滤</div>
+    </div>
+    <div class="card c-cyan">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-chart"/></svg></span><span class="card-title">账单分析</span></div>
+      <div class="card-desc">热力图 · 日历热力图 · 桑基流向图 · 健康雷达图</div>
+    </div>
+    <div class="card c-purple">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-users"/></svg></span><span class="card-title">个人中心</span></div>
+      <div class="card-desc">多账套独立核算，一套账本互不干扰</div>
+    </div>
+    <div class="card c-green">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-gear"/></svg></span><span class="card-title">系统设置</span></div>
+      <div class="card-desc">数据库切换 · API Key 加密 · 备份恢复 · 日志分级 · 数据质检</div>
+    </div>
+    <div class="card c-orange">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-pdf"/></svg></span><span class="card-title">报告导出</span></div>
+      <div class="card-desc">ReportLab 中文 PDF（图表 + AI 建议）· Excel / CSV / JSON</div>
+    </div>
+  </div>
 </div>
 </div>
 
-<!-- ====== SLIDE 9: 预算管理 ====== -->
-<div class="slide content-slide" data-slide="9">
+<!-- ============================ 9 · 数据链路 ============================ -->
+<div class="slide content-slide" data-slide="9" data-chapter="02 数据模型与功能实现">
 <div class="slide-content">
-<h2>预算管理与四级预警</h2>
-<div class="two-col">
-<div>
-<div class="card-grid" style="grid-template-columns:1fr">
-<div class="card green">
-<span class="card-icon"></span><div class="card-title">月度预算设置</div>
-<div class="card-desc">按月份独立配置预算额度，支持动态调整；系统建议为月收入的 80%~90%，符合理财最佳实践</div>
-</div>
-<div class="card orange">
-<span class="card-icon"></span><div class="card-title">四级预算状态</div>
-<div class="card-desc">
-<span class="status-dot" style="background:#34d399"></span><b>健康</b> ≤80% 使用率<br>
-<span class="status-dot" style="background:#60a5fa"></span><b>正常</b> ≤90% 使用率<br>
-<span class="status-dot" style="background:#fbbf24"></span><b>即将超支</b> ≤100% 使用率<br>
-<span class="status-dot" style="background:#f87171"></span><b>已超支</b> >100% 使用率</div>
-</div>
-</div>
-</div>
-<div>
-<div class="highlight">
-<h3 style="color:#c4b5fd">预算核心指标体系</h3>
-<table class="data-table">
-<thead><tr><th>指标</th><th>计算方式</th><th>UI 展示</th></tr></thead>
-<tbody>
-<tr><td>预算总额</td><td>用户设定值</td><td>蓝色信息卡</td></tr>
-<tr><td>已使用金额</td><td>当月支出 Σ</td><td>橙色信息卡</td></tr>
-<tr><td>剩余额度</td><td>预算 - 已使用</td><td>绿色信息卡</td></tr>
-<tr><td>使用率</td><td>已使用 ÷ 预算 × 100%</td><td>动态彩色进度条</td></tr>
-</tbody>
-</table>
-</div>
-<p style="color:#8b85a5;text-align:center;margin-top:16px;font-size:13px">
-进度条颜色随状态自动变化：绿 → 蓝 → 橙 → 红，一目了然
-</p>
-</div>
-</div>
+  <h2>记账数据链路：五步闭环<span class="h2-sub">Data Pipeline · 每一步均可追溯、可审计</span></h2>
+  <div class="h2-bar"></div>
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="step-num">1</div>
+      <div class="step-title">凭证录入</div>
+      <div class="step-desc">日期 · 类别 · 金额<br>支付方式 · 摘要</div>
+      <span class="step-tag">ui/pages</span>
+    </div>
+    <div class="flow-arrow"><svg class="ic"><use href="#i-arrow-right"/></svg></div>
+    <div class="flow-step">
+      <div class="step-num">2</div>
+      <div class="step-title">单据持久化</div>
+      <div class="step-desc">写入 sz_sheet_sr / zc<br>自动生成唯一单据号 djh</div>
+      <span class="step-tag">models/</span>
+    </div>
+    <div class="flow-arrow"><svg class="ic"><use href="#i-arrow-right"/></svg></div>
+    <div class="flow-step">
+      <div class="step-num">3</div>
+      <div class="step-title">流水账生成</div>
+      <div class="step-desc">UNION ALL 合并收支<br>按日期排序 · 滚动余额</div>
+      <span class="step-tag">sz_table_lsz</span>
+    </div>
+    <div class="flow-arrow"><svg class="ic"><use href="#i-arrow-right"/></svg></div>
+    <div class="flow-step">
+      <div class="step-num">4</div>
+      <div class="step-title">月报汇总</div>
+      <div class="step-desc">按支付方式分组<br>期初 · 收入 · 支出 · 期末</div>
+      <span class="step-tag">sz_report_srzc</span>
+    </div>
+    <div class="flow-arrow"><svg class="ic"><use href="#i-arrow-right"/></svg></div>
+    <div class="flow-step">
+      <div class="step-num">5</div>
+      <div class="step-title">分析与输出</div>
+      <div class="step-desc">趋势 · 占比 · 异常检测<br>AI 建议 · PDF / Excel 导出</div>
+      <span class="step-tag">utils/</span>
+    </div>
+  </div>
+  <div class="highlight" style="margin-top:18px">
+    <p><b>闭环要点：</b>第 3、4 步账簿由单据<b>派生计算</b>，可随时全量重算（<code>regenerate_all.py</code>），杜绝二次录入错账。</p>
+  </div>
 </div>
 </div>
 
-<!-- ====== SLIDE 10: 数据安全 & 工程化 ====== -->
-<div class="slide content-slide" data-slide="10">
+<!-- ============================ 10 · 章节 03 ============================ -->
+<div class="slide section-slide" data-slide="10" data-chapter="03 分析引擎与智能决策">
 <div class="slide-content">
-<h2>数据安全与工程化设计</h2>
-<div class="two-col">
-<div>
-<h3>多层数据保护</h3>
-<ul class="feature-list">
-<li><span class="li-icon"></span><b>一键备份 / 恢复</b> — 完整 SQLite 数据库快照</li>
-<li><span class="li-icon"></span><b>API Key AES 加密</b> — cryptography 库 Fernet 对称加密</li>
-<li><span class="li-icon"></span><b>密钥分离管理</b> — connection.key + secret.key 双文件</li>
-<li><span class="li-icon"></span><b>账套号 + 密码</b> — 登录认证双重验证</li>
-<li><span class="li-icon"></span><b>事务管理</b> — begin / commit / rollback 三态控制</li>
-</ul>
-</div>
-<div>
-<h3>企业级工程特性</h3>
-<ul class="feature-list">
-<li><span class="li-icon"></span><b>启动画面</b> — QSplashScreen 品牌展示 + 异步初始化</li>
-<li><span class="li-icon"></span><b>日志系统</b> — logging 模块按级别（INFO/WARNING/ERROR）分级</li>
-<li><span class="li-icon"></span><b>连接池管理</b> — DBUtils PooledDB 管理 MySQL 连接</li>
-<li><span class="li-icon"></span><b>自动重连机制</b> — 连接失效检测 + 3 次重试策略</li>
-<li><span class="li-icon"></span><b>SQL 方言适配</b> — 跨数据库函数自动映射</li>
-<li><span class="li-icon"></span><b>友好错误引导</b> — Sybase 错误码→中文解决方案</li>
-</ul>
-</div>
-</div>
+  <div class="section-num">03</div>
+  <h2>分析引擎与智能决策</h2>
+  <div class="section-rule"></div>
+  <div class="section-desc">
+    财务健康指标体系 · 多维统计可视化<br>
+    统计规则引擎 + 大语言模型 双引擎协同
+  </div>
 </div>
 </div>
 
-<!-- ====== SLIDE 11: 创新亮点 ====== -->
-<div class="slide content-slide" data-slide="11">
+<!-- ============================ 11 · 财务指标体系 ============================ -->
+<div class="slide content-slide" data-slide="11" data-chapter="03 分析引擎与智能决策">
 <div class="slide-content">
-<h2>创新亮点总结</h2>
-<div class="card-grid">
-<div class="card purple">
-<span class="card-icon"></span>
-<div class="card-title">多数据库抽象层</div>
-<div class="card-desc">策略模式 + 工厂模式，一套代码同时驱动 SQLite / MySQL / Sybase 三种异构数据库，SQL 方言自动适配，新增数据库只需新增子类</div>
-</div>
-<div class="card green">
-<span class="card-icon"></span>
-<div class="card-title">AI + 规则双引擎</div>
-<div class="card-desc">DeepSeek 大模型提供个性化理财建议，离线自动降级为统计规则引擎，网络异常不影响核心分析能力</div>
-</div>
-<div class="card orange">
-<span class="card-icon"></span>
-<div class="card-title">完整数据闭环</div>
-<div class="card-desc">录入 → 存储 → 流水账 → 月报 → 分析五步闭环，每步可追溯审计；7 张数据表遵循专业财务编码规范</div>
-</div>
-<div class="card red">
-<span class="card-icon"></span>
-<div class="card-title">企业级工程化</div>
-<div class="card-desc">连接池管理 · 慢查询监控 · 自动重连 · 加密存储 · 日志分级 · 错误友好 · 启动画面 — 桌面应用最佳实践</div>
-</div>
-</div>
+  <h2>财务健康指标体系<span class="h2-sub">从"记账"走向"诊断"：6 项可量化、可解释的评价指标</span></h2>
+  <div class="h2-bar"></div>
+  <div class="formula-box">
+    <div class="formula-row">
+      <div class="formula-name"><svg class="ic" style="font-size:15px"><use href="#i-scale"/></svg>净结余</div>
+      <div class="formula-expr">Net = Σ Income − Σ Expense
+        <span class="formula-note">全部比率指标的分子基础</span></div>
+    </div>
+    <div class="formula-row">
+      <div class="formula-name"><svg class="ic" style="font-size:15px"><use href="#i-target"/></svg>储蓄率</div>
+      <div class="formula-expr">SavingRate = Net ÷ Σ Income × 100%
+        <span class="formula-note">50/30/20 法则：必要 50% · 弹性 30% · 储蓄 ≥ 20%</span></div>
+    </div>
+    <div class="formula-row">
+      <div class="formula-name"><svg class="ic" style="font-size:15px"><use href="#i-warning"/></svg>预算执行率</div>
+      <div class="formula-expr">ExecRate = 当月支出 ÷ 月度预算 × 100%
+        <span class="formula-note">&lt; 80% 健康 · 80~100% 预警 · &gt; 100% 超支</span></div>
+    </div>
+    <div class="formula-row">
+      <div class="formula-name"><svg class="ic" style="font-size:15px"><use href="#i-flame"/></svg>恩格尔系数</div>
+      <div class="formula-expr">Engel = 餐饮支出 ÷ 总支出 × 100%
+        <span class="formula-note">联合国标准：&gt;59% 贫困 · 50~59% 温饱 · 40~50% 小康 · 30~40% 富裕 · &lt;30% 最富裕</span></div>
+    </div>
+    <div class="formula-row">
+      <div class="formula-name"><svg class="ic" style="font-size:15px"><use href="#i-trend"/></svg>支出趋势斜率</div>
+      <div class="formula-expr">β = Σ(x<sub>i</sub>−x̄)(y<sub>i</sub>−ȳ) ÷ Σ(x<sub>i</sub>−x̄)<sup>2</sup>
+        <span class="formula-note">最小二乘拟合月度序列；|β| &gt; 5% × y<sub>last</sub> 判为升 / 降，否则稳定</span></div>
+    </div>
+    <div class="formula-row">
+      <div class="formula-name"><svg class="ic" style="font-size:15px"><use href="#i-bulb"/></svg>异常消费阈值</div>
+      <div class="formula-expr">T = μ + k · σ ， k = 2.0
+        <span class="formula-note">正态假设下单尾覆盖约 97.7%；异常分数 z = (x − μ) ÷ σ，按 z 降序输出触发原因</span></div>
+    </div>
+  </div>
+  <p class="lead" style="margin-top:12px;font-size:12.5px">
+    指标由 <code>ai_analyzer.py</code>（522 行）与 <code>data_analyzer.py</code>（298 行）基于真实记录计算，<b>非常量预设</b>。</p>
 </div>
 </div>
 
-<!-- ====== SLIDE 12: 应用场景 ====== -->
-<div class="slide content-slide" data-slide="12">
+<!-- ============================ 12 · 多维可视化 ============================ -->
+<div class="slide content-slide" data-slide="12" data-chapter="03 分析引擎与智能决策">
 <div class="slide-content">
-<h2>应用场景与价值</h2>
-<div class="card-grid">
-<div class="card blue">
-<span class="card-icon"></span><div class="card-title">个人理财管理</div>
-<div class="card-desc">日常收支记账 · 消费习惯培养 · 月度预算控制 · 财务健康度追踪 · 异常消费预警</div>
-</div>
-<div class="card green">
-<span class="card-icon"></span><div class="card-title">小微商户经营</div>
-<div class="card-desc">多账套独立管理 · 收入分类统计 · 支付方式分析 · 简易财务报表 · 数据驱动经营决策</div>
-</div>
-<div class="card purple">
-<span class="card-icon"></span><div class="card-title">财务管理教学</div>
-<div class="card-desc">完整数据模型展示 · 记账流程实操演示 · 数据分析实践 · AI 辅助学习 · 理论与实战结合</div>
-</div>
-<div class="card orange">
-<span class="card-icon"></span><div class="card-title">数据驱动决策</div>
-<div class="card-desc">趋势预测辅助预算制定 · 异常检测及时止损 · 占比分析优化消费结构 · 量化呈现财务状况</div>
-</div>
-</div>
-<div class="highlight" style="margin-top:22px">
-<p><b>大赛契合度：</b>作品紧扣"数智经管"主题核心——将大数据分析技术（pandas / scipy / seaborn）与人工智能（DeepSeek）深度融入传统财务管理，实现从"被动记账工具"到"主动智能财务助手"的跨越式升级。</p>
-</div>
+  <h2>多维数据可视化分析<span class="h2-sub">时间维度趋势 + 结构维度占比 + 高级分析图表</span></h2>
+  <div class="h2-bar"></div>
+  <div class="two-col narrow-right">
+    <div>
+      <h3><svg class="ic"><use href="#i-chart"/></svg>时间与结构维度</h3>
+      <ul class="feature-list">
+        <li><svg class="ic li-icon"><use href="#i-clock"/></svg><span><b>按日 / 按月 / 按年</b> 三种聚合粒度自由切换</span></li>
+        <li><svg class="ic li-icon"><use href="#i-trend"/></svg><span><b>双轴组合图</b>：柱状（收支金额）+ 折线（净结余）</span></li>
+        <li><svg class="ic li-icon"><use href="#i-pie"/></svg><span><b>三张占比饼图</b>：收入来源 · 消费结构 · 支付方式</span></li>
+        <li><svg class="ic li-icon"><use href="#i-calendar"/></svg><span>快捷时间筛选：全部历史 / 本周 / 本月 / 本年</span></li>
+        <li><svg class="ic li-icon"><use href="#i-check"/></svg><span>标签密度自适应：≤15 点全显示，&gt;30 点间隔显示</span></li>
+      </ul>
+      <div class="tech-tags">
+        <span class="tech-tag">matplotlib</span><span class="tech-tag g">seaborn</span>
+        <span class="tech-tag o">pandas</span><span class="tech-tag p">numpy</span><span class="tech-tag r">scipy</span>
+      </div>
+    </div>
+    <div>
+      <h3><svg class="ic"><use href="#i-radar"/></svg>高级分析图表（4 类）</h3>
+      <div class="chart-pair" style="grid-template-columns:1fr;margin-top:0">
+        <div class="chart-panel">
+          <h4><svg class="ic"><use href="#i-flame"/></svg>消费热力图</h4>
+          <div class="cap">一周 × 四时段消费强度分布，颜色越深金额越高</div>
+          <svg class="diagram" viewBox="0 0 310 152" role="img" aria-label="消费热力图">
+            <g font-size="9.5" fill="#7d7699">
+              <text x="26" y="27" text-anchor="end">早</text>
+              <text x="26" y="56" text-anchor="end">午</text>
+              <text x="26" y="85" text-anchor="end">晚</text>
+              <text x="26" y="114" text-anchor="end">夜</text>
+              <text x="48" y="137" text-anchor="middle">一</text><text x="87" y="137" text-anchor="middle">二</text>
+              <text x="126" y="137" text-anchor="middle">三</text><text x="165" y="137" text-anchor="middle">四</text>
+              <text x="204" y="137" text-anchor="middle">五</text><text x="243" y="137" text-anchor="middle">六</text>
+              <text x="282" y="137" text-anchor="middle">日</text>
+            </g>
+            <g>
+              <rect x="30" y="8" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".16"/>
+              <rect x="69" y="8" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".11"/>
+              <rect x="108" y="8" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".22"/>
+              <rect x="147" y="8" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".13"/>
+              <rect x="186" y="8" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".36"/>
+              <rect x="225" y="8" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".55"/>
+              <rect x="264" y="8" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".42"/>
+              <rect x="30" y="37" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".31"/>
+              <rect x="69" y="37" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".35"/>
+              <rect x="108" y="37" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".46"/>
+              <rect x="147" y="37" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".26"/>
+              <rect x="186" y="37" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".61"/>
+              <rect x="225" y="37" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".86"/>
+              <rect x="264" y="37" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".71"/>
+              <rect x="30" y="66" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".56"/>
+              <rect x="69" y="66" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".51"/>
+              <rect x="108" y="66" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".66"/>
+              <rect x="147" y="66" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".46"/>
+              <rect x="186" y="66" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".91"/>
+              <rect x="225" y="66" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".96"/>
+              <rect x="264" y="66" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".81"/>
+              <rect x="30" y="95" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".21"/>
+              <rect x="69" y="95" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".26"/>
+              <rect x="108" y="95" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".36"/>
+              <rect x="147" y="95" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".31"/>
+              <rect x="186" y="95" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".56"/>
+              <rect x="225" y="95" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".76"/>
+              <rect x="264" y="95" width="36" height="26" rx="3" fill="#8b5cf6" fill-opacity=".61"/>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-panel">
+          <h4><svg class="ic"><use href="#i-radar"/></svg>财务健康雷达图</h4>
+          <div class="cap">五维评分（示意）：收入稳定性 · 支出控制 · 储蓄率 · 预算执行 · 消费结构</div>
+          <svg class="diagram" viewBox="-30 -22 300 244" role="img" aria-label="财务健康雷达图">
+            <g fill="none" stroke="rgba(255,255,255,.10)">
+              <polygon points="100,82.5 116.64,94.59 110.29,114.16 89.71,114.16 83.36,94.59"/>
+              <polygon points="100,65 133.29,89.19 120.57,128.32 79.43,128.32 66.71,89.19"/>
+              <polygon points="100,47.5 149.93,83.78 130.86,142.47 69.14,142.47 50.07,83.78"/>
+              <polygon points="100,30 166.57,78.37 141.14,156.63 58.86,156.63 33.43,78.37"/>
+            </g>
+            <g stroke="rgba(255,255,255,.08)">
+              <path d="M100 100L100 30"/><path d="M100 100L166.57 78.37"/><path d="M100 100L141.14 156.63"/>
+              <path d="M100 100L58.86 156.63"/><path d="M100 100L33.43 78.37"/>
+            </g>
+            <polygon points="100,45.4 143.28,85.94 122.63,131.15 66.26,146.44 53.40,84.86"
+                     fill="#8b5cf6" fill-opacity=".26" stroke="#a78bfa" stroke-width="1.8"/>
+            <g fill="#a78bfa">
+              <circle cx="100" cy="45.4" r="3"/><circle cx="143.28" cy="85.94" r="3"/>
+              <circle cx="122.63" cy="131.15" r="3"/><circle cx="66.26" cy="146.44" r="3"/>
+              <circle cx="53.4" cy="84.86" r="3"/>
+            </g>
+            <g font-size="10.5" fill="#8b85a5">
+              <text x="100" y="16" text-anchor="middle">收入稳定性</text>
+              <text x="186" y="76">支出控制</text>
+              <text x="154" y="177">储蓄率</text>
+              <text x="45" y="177" text-anchor="end">预算执行</text>
+              <text x="13" y="76" text-anchor="end">消费结构</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </div>
 
-<!-- ====== SLIDE 13: 项目总结 ====== -->
-<div class="slide content-slide" data-slide="13">
+<!-- ============================ 13 · AI 分析引擎 ============================ -->
+<div class="slide content-slide" data-slide="13" data-chapter="03 分析引擎与智能决策">
 <div class="slide-content">
-<h2>项目总结</h2>
-<div class="stats-row">
-<div class="stat-box"><div class="stat-val" style="color:#818cf8">~3,500</div><div class="stat-label">Python 代码行数</div></div>
-<div class="stat-box"><div class="stat-val" style="color:#34d399">9</div><div class="stat-label">功能模块页面</div></div>
-<div class="stat-box"><div class="stat-val" style="color:#fbbf24">7+1</div><div class="stat-label">数据表 + 视图</div></div>
-<div class="stat-box"><div class="stat-val" style="color:#a78bfa">15+</div><div class="stat-label">核心依赖库</div></div>
-</div>
-<div class="highlight">
-<h3>技术收获</h3>
-<p>完整掌握 PyQt5 桌面应用开发全流程、策略模式多数据库抽象架构、matplotlib + seaborn 数据可视化、DeepSeek API 集成与提示工程、cryptography 加密存储、DBUtils 连接池管理、reportlab PDF 动态生成等企业级开发能力。</p>
-</div>
-<div class="highlight" style="margin-top:14px">
-<h3>专业融合</h3>
-<p>作为大数据与财务管理专业学生，作品将<b>编程技术</b>与<b>财务专业知识</b>深度融合——数据库科目编码遵循会计规范、流水账遵循财务会计准则、月报设计参考财务管理实务、预算管理体现管理会计思想，真正做到"懂财务的程序员写出的财务软件"。</p>
-</div>
+  <h2>AI 智能分析引擎<span class="h2-sub">Dual-Engine Design · 在线智能化，离线不降级</span></h2>
+  <div class="h2-bar"></div>
+
+  <svg class="diagram" viewBox="0 0 1000 140" role="img" aria-label="双引擎调度流程">
+    <g stroke-linejoin="round">
+      <rect x="8" y="52" width="135" height="36" rx="8" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.08)"/>
+      <text x="75" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#e0dcf0">数据库记录</text>
+      <text x="75" y="83" text-anchor="middle" font-size="9.5" fill="#7d7699">真实流水</text>
+      <path d="M147 70h12" stroke="rgba(167,139,250,.5)" stroke-width="1.5" fill="none"/>
+      <path d="M154 65.5L161 70l-7 4.5" fill="rgba(167,139,250,.5)" stroke="none"/>
+
+      <rect x="163" y="52" width="160" height="36" rx="8" fill="rgba(16,185,129,.13)" stroke="rgba(16,185,129,.34)"/>
+      <text x="243" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#6ee7b7">统计引擎（本地）</text>
+      <text x="243" y="83" text-anchor="middle" font-size="9.5" fill="#7d7699">Top5 · 趋势 β · 2σ</text>
+      <path d="M327 70h12" stroke="rgba(167,139,250,.5)" stroke-width="1.5" fill="none"/>
+      <path d="M334 65.5L341 70l-7 4.5" fill="rgba(167,139,250,.5)" stroke="none"/>
+
+      <rect x="343" y="52" width="140" height="36" rx="8" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.08)"/>
+      <text x="413" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#e0dcf0">结构化指标</text>
+      <text x="413" y="83" text-anchor="middle" font-size="9.5" fill="#7d7699">储蓄率 · 恩格尔</text>
+      <path d="M487 70h12" stroke="rgba(167,139,250,.5)" stroke-width="1.5" fill="none"/>
+      <path d="M494 65.5L501 70l-7 4.5" fill="rgba(167,139,250,.5)" stroke="none"/>
+
+      <rect x="503" y="52" width="130" height="36" rx="8" fill="rgba(255,255,255,.03)"
+            stroke="rgba(167,139,250,.45)" stroke-dasharray="5 4"/>
+      <text x="568" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#c4b5fd">路由判断</text>
+      <text x="568" y="83" text-anchor="middle" font-size="9.5" fill="#7d7699">API 是否可用</text>
+
+      <path d="M633 60h12V26h16" stroke="rgba(139,92,246,.5)" stroke-width="1.5" fill="none"/>
+      <path d="M656 21.5L663 26l-7 4.5" fill="rgba(139,92,246,.5)" stroke="none"/>
+      <path d="M633 80h12v34h16" stroke="rgba(245,158,11,.5)" stroke-width="1.5" fill="none"/>
+      <path d="M656 109.5L663 114l-7 4.5" fill="rgba(245,158,11,.5)" stroke="none"/>
+
+      <rect x="663" y="8" width="180" height="36" rx="8" fill="rgba(139,92,246,.13)" stroke="rgba(139,92,246,.34)"/>
+      <text x="753" y="24" text-anchor="middle" font-size="12" font-weight="700" fill="#c4b5fd">DeepSeek 大模型</text>
+      <text x="753" y="39" text-anchor="middle" font-size="9.5" fill="#7d7699">deepseek-chat · T=0.9</text>
+
+      <rect x="663" y="96" width="180" height="36" rx="8" fill="rgba(245,158,11,.13)" stroke="rgba(245,158,11,.34)"/>
+      <text x="753" y="112" text-anchor="middle" font-size="12" font-weight="700" fill="#fcd34d">离线规则引擎</text>
+      <text x="753" y="127" text-anchor="middle" font-size="9.5" fill="#7d7699">超支 · 趋势 · 预算</text>
+
+      <path d="M843 26h15v36h11" stroke="rgba(167,139,250,.5)" stroke-width="1.5" fill="none"/>
+      <path d="M864 57.5L871 62l-7 4.5" fill="rgba(167,139,250,.5)" stroke="none"/>
+      <path d="M843 114h15v-36h11" stroke="rgba(245,158,11,.5)" stroke-width="1.5" fill="none"/>
+      <path d="M864 73.5L871 78l-7 4.5" fill="rgba(245,158,11,.5)" stroke="none"/>
+
+      <rect x="873" y="44" width="119" height="36" rx="8" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.1)"/>
+      <text x="932" y="62" text-anchor="middle" font-size="12" font-weight="700" fill="#e0dcf0">统一输出</text>
+      <text x="932" y="77" text-anchor="middle" font-size="9.5" fill="#7d7699">3~5 条建议</text>
+    </g>
+  </svg>
+
+  <div class="two-col" style="margin-top:14px">
+    <div>
+      <h3><svg class="ic"><use href="#i-cpu"/></svg>引擎 A · 本地统计规则</h3>
+      <div class="card c-green" style="margin-bottom:12px">
+        <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-trend"/></svg></span><span class="card-title">消费习惯量化</span></div>
+        <div class="card-desc">Top 5 消费类别排名与占比 · 月度趋势判定（β 斜率 ±5% 阈值）· 月均 / 最高 / 最低消费统计</div>
+      </div>
+      <div class="card c-orange">
+        <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-warning"/></svg></span><span class="card-title">异常消费检测</span></div>
+        <div class="card-desc">阈值 T = μ + 2σ，自动筛查异常大额交易，按异常分数 z 降序排列并标注触发原因</div>
+      </div>
+    </div>
+    <div>
+      <h3><svg class="ic"><use href="#i-sparkles"/></svg>引擎 B · DeepSeek 大模型</h3>
+      <div class="card c-purple" style="margin-bottom:12px">
+        <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-sparkles"/></svg></span><span class="card-title">个性化建议生成</span></div>
+        <div class="card-desc">结构化 Prompt 注入本地统计结果，调用 <code>deepseek-chat</code>（temperature 0.9）生成 3~5 条可执行理财建议</div>
+      </div>
+      <div class="card c-red">
+        <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-refresh"/></svg></span><span class="card-title">离线自动降级</span></div>
+        <div class="card-desc">API 缺失或网络异常时切换规则引擎：超支警告 · 趋势提醒 · 预算分配建议 · 应急基金建议</div>
+      </div>
+    </div>
+  </div>
+  <div class="highlight" style="margin-top:16px">
+    <p><b>工程要点：</b><code>ai_assistant.py</code> 以独立线程调用 LLM 避免阻塞 UI；API Key 经 <b>Fernet 对称加密</b>落盘，
+    登录口令 <b>bcrypt 12 轮哈希</b>，密钥与密文分离存放。</p>
+  </div>
 </div>
 </div>
 
-<!-- ====== SLIDE 14: 未来展望 ====== -->
-<div class="slide content-slide" data-slide="14">
+<!-- ============================ 14 · 章节 04 ============================ -->
+<div class="slide section-slide" data-slide="14" data-chapter="04 安全、工程与价值">
 <div class="slide-content">
-<h2>未来规划与展望</h2>
-<div class="two-col">
-<div>
-<div class="card purple" style="margin-bottom:14px">
-<span class="card-icon"></span><div class="card-title">多端覆盖</div>
-<div class="card-desc">开发 iOS / Android 移动端 App，通过 RESTful API 与桌面端数据实时同步，实现随时随地记账查账</div>
-</div>
-<div class="card green">
-<span class="card-icon"></span><div class="card-title">云同步服务</div>
-<div class="card-desc">搭建端到端加密云同步服务，多设备数据无缝共享，支持家庭成员 / 团队协作记账与预算管理</div>
-</div>
-</div>
-<div>
-<div class="card orange" style="margin-bottom:14px">
-<span class="card-icon"></span><div class="card-title">AI 能力升级</div>
-<div class="card-desc">接入更多 AI 模型、发票 OCR 自动识别、语音快捷记账、智能分类自动匹配、个性化财务规划报告</div>
-</div>
-<div class="card red">
-<span class="card-icon"></span><div class="card-title">插件生态系统</div>
-<div class="card-desc">开放标准化插件接口 (Plugin API)，支持社区贡献股票投资分析、税务计算、多币种汇率等专业扩展</div>
-</div>
-</div>
-</div>
+  <div class="section-num">04</div>
+  <h2>安全、工程与价值</h2>
+  <div class="section-rule"></div>
+  <div class="section-desc">
+    三级预算预警 · 多层数据安全 · 企业级工程特性<br>
+    应用场景与大赛主题契合度
+  </div>
 </div>
 </div>
 
-<!-- ====== SLIDE 15: 致谢 ====== -->
-<div class="slide cover-slide" data-slide="15">
+<!-- ============================ 15 · 预算管理 ============================ -->
+<div class="slide content-slide" data-slide="15" data-chapter="04 安全、工程与价值">
 <div class="slide-content">
-<div class="section-num" style="font-size:160px;opacity:.03"></div>
-<h1 style="font-size:54px">敬请批评指正</h1>
-<div class="subtitle" style="margin-bottom:52px">「 数智经管 · 创见未来 」创意作品设计大赛</div>
-<div class="meta" style="font-size:18px">
+  <h2>预算管理与三级预警<span class="h2-sub">BudgetManager · 录入即校验，超支前干预</span></h2>
+  <div class="h2-bar"></div>
+  <div class="two-col">
+    <div>
+      <h3><svg class="ic"><use href="#i-target"/></svg>预算状态判定规则</h3>
+      <div class="formula-box" style="margin-top:6px">
+        <div class="formula-row">
+          <div class="formula-name"><span class="pill ok"><i></i>健康</span></div>
+          <div class="formula-expr">ExecRate &lt; 80%<span class="formula-note">预算充足，无需干预</span></div>
+        </div>
+        <div class="formula-row">
+          <div class="formula-name"><span class="pill warn"><i></i>预警</span></div>
+          <div class="formula-expr">80% ≤ ExecRate ≤ 100%<span class="formula-note">支出录入时弹出确认提示，触发事前控制</span></div>
+        </div>
+        <div class="formula-row">
+          <div class="formula-name"><span class="pill bad"><i></i>超支</span></div>
+          <div class="formula-expr">ExecRate &gt; 100%<span class="formula-note">红色告警，同步进入 AI 分析的超支归因</span></div>
+        </div>
+      </div>
+      <p class="lead" style="margin-top:12px">建议月度预算取月收入的 <b>80%~90%</b>，与"储蓄率 ≥ 20%"相互印证。</p>
+    </div>
+    <div>
+      <h3><svg class="ic"><use href="#i-chart"/></svg>预算执行可视化</h3>
+      <div style="border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:20px 22px;background:rgba(255,255,255,.022)">
+        <div class="meter-row">
+          <span class="meter-label">健康账户 &lt;80%</span>
+          <span class="meter-track"><span class="meter-fill" style="width:62%;background:linear-gradient(90deg,#34d399,#10b981)"></span></span>
+          <span class="meter-val" style="color:#6ee7b7">62%</span>
+        </div>
+        <div class="meter-row">
+          <span class="meter-label">临界账户 80~100%</span>
+          <span class="meter-track"><span class="meter-fill" style="width:88%;background:linear-gradient(90deg,#fbbf24,#f59e0b)"></span></span>
+          <span class="meter-val" style="color:#fcd34d">88%</span>
+        </div>
+        <div class="meter-row">
+          <span class="meter-label">超支账户 &gt;100%</span>
+          <span class="meter-track"><span class="meter-fill" style="width:100%;background:linear-gradient(90deg,#f87171,#ef4444)"></span></span>
+          <span class="meter-val" style="color:#fca5a5">117%</span>
+        </div>
+        <p style="font-size:11.5px;color:#7d7699;margin-top:12px;line-height:1.7">
+          进度条随状态自动变色：绿 → 橙 → 红；变更写入 <code>sz_budget_history</code> 留痕。</p>
+      </div>
+      <div class="kpi-strip">
+        <div class="kpi"><span class="kpi-lb">预算总额</span><span class="kpi-v" style="color:#93c5fd">¥3,000</span></div>
+        <div class="kpi"><span class="kpi-lb">已使用（当月支出 Σ）</span><span class="kpi-v" style="color:#fcd34d">¥2,640</span></div>
+        <div class="kpi"><span class="kpi-lb">剩余额度</span><span class="kpi-v" style="color:#6ee7b7">¥360</span></div>
+        <div class="kpi"><span class="kpi-lb">执行率</span><span class="kpi-v" style="color:#fca5a5">88%</span></div>
+      </div>
+    </div>
+  </div>
 </div>
-<div style="margin-top:48px">
 </div>
+
+<!-- ============================ 16 · 安全与工程 ============================ -->
+<div class="slide content-slide" data-slide="16" data-chapter="04 安全、工程与价值">
+<div class="slide-content">
+  <h2>数据安全与工程化设计<span class="h2-sub">Security &amp; Engineering Practices</span></h2>
+  <div class="h2-bar"></div>
+  <div class="two-col">
+    <div>
+      <h3><svg class="ic"><use href="#i-lock"/></svg>多层数据保护</h3>
+      <div class="icon-grid">
+        <div class="icon-cell"><svg class="ic cell-ic"><use href="#i-refresh"/></svg><span class="cell-txt"><b>备份 / 恢复</b>按日 / 周自动快照</span></div>
+        <div class="icon-cell"><svg class="ic cell-ic"><use href="#i-lock"/></svg><span class="cell-txt"><b>API Key 加密</b>Fernet 对称加密</span></div>
+        <div class="icon-cell"><svg class="ic cell-ic"><use href="#i-shield"/></svg><span class="cell-txt"><b>口令哈希</b>bcrypt 12 轮 salt</span></div>
+        <div class="icon-cell"><svg class="ic cell-ic"><use href="#i-users"/></svg><span class="cell-txt"><b>账套隔离</b>多账本互不干扰</span></div>
+        <div class="icon-cell"><svg class="ic cell-ic"><use href="#i-doc"/></svg><span class="cell-txt"><b>审计日志</b>sys_audit_log 留痕</span></div>
+        <div class="icon-cell"><svg class="ic cell-ic"><use href="#i-db"/></svg><span class="cell-txt"><b>事务管理</b>begin / commit / rollback</span></div>
+      </div>
+    </div>
+    <div>
+      <h3><svg class="ic"><use href="#i-cpu"/></svg>企业级工程特性</h3>
+      <div class="icon-grid">
+        <div class="icon-cell"><svg class="ic cell-ic"><use href="#i-monitor"/></svg><span class="cell-txt"><b>启动画面</b>QSplashScreen 异步初始化</span></div>
+        <div class="icon-cell"><svg class="ic cell-ic"><use href="#i-doc"/></svg><span class="cell-txt"><b>日志分级</b>INFO / WARNING / ERROR</span></div>
+        <div class="icon-cell"><svg class="ic cell-ic"><use href="#i-cloud"/></svg><span class="cell-txt"><b>连接池</b>PooledDB 最大 15 连接</span></div>
+        <div class="icon-cell"><svg class="ic cell-ic"><use href="#i-refresh"/></svg><span class="cell-txt"><b>自动重连</b>失效检测 + 3 次重试</span></div>
+        <div class="icon-cell"><svg class="ic cell-ic"><use href="#i-clock"/></svg><span class="cell-txt"><b>慢查询监控</b>&gt; 1000 ms 告警</span></div>
+        <div class="icon-cell"><svg class="ic cell-ic"><use href="#i-code"/></svg><span class="cell-txt"><b>方言适配</b>跨库函数自动映射</span></div>
+        <div class="icon-cell"><svg class="ic cell-ic"><use href="#i-plug"/></svg><span class="cell-txt"><b>错误友好化</b>错误码 → 中文方案</span></div>
+        <div class="icon-cell"><svg class="ic cell-ic"><use href="#i-gear"/></svg><span class="cell-txt"><b>打包发布</b>PyInstaller + Inno Setup</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============================ 17 · 创新亮点 ============================ -->
+<div class="slide content-slide" data-slide="17" data-chapter="04 安全、工程与价值">
+<div class="slide-content">
+  <h2>创新亮点总结<span class="h2-sub">四个维度的差异化设计</span></h2>
+  <div class="h2-bar"></div>
+  <div class="card-grid">
+    <div class="card c-purple">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-layers"/></svg></span><span class="card-title">多数据库抽象层</span></div>
+      <div class="card-desc">一套代码驱动三种异构数据库，方言自动适配，扩展只需新增子类</div>
+    </div>
+    <div class="card c-green">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-sparkles"/></svg></span><span class="card-title">AI + 规则双引擎</span></div>
+      <div class="card-desc">离线自动降级为规则引擎；双引擎共享同一指标口径，断网不影响核心分析</div>
+    </div>
+    <div class="card c-orange">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-flow"/></svg></span><span class="card-title">派生式数据闭环</span></div>
+      <div class="card-desc">账簿由单据派生而非录入，支持全量重算，账证相符且全程可审计</div>
+    </div>
+    <div class="card c-red">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-shield"/></svg></span><span class="card-title">企业级工程化</span></div>
+      <div class="card-desc">连接池 · 慢查询 · 自动重连 · 加密存储 · 日志分级 · 审计留痕 —— 工程实践完整落地</div>
+    </div>
+  </div>
+  <div class="highlight" style="margin-top:16px">
+    <p><b>科学性三要素：</b>数据模型遵循会计核算流程组织 · 分析指标均有<b>公式与统计学依据</b> · 账簿<b>可重算、可追溯</b>。</p>
+  </div>
+</div>
+</div>
+
+<!-- ============================ 18 · 应用场景 ============================ -->
+<div class="slide content-slide" data-slide="18" data-chapter="04 安全、工程与价值">
+<div class="slide-content">
+  <h2>应用场景与价值<span class="h2-sub">四类目标场景 · 与大赛主题的对标</span></h2>
+  <div class="h2-bar"></div>
+  <div class="card-grid">
+    <div class="card c-blue">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-users"/></svg></span><span class="card-title">个人理财管理</span></div>
+      <div class="card-desc">收支记账 · 预算控制 · 健康度追踪 · 异常预警</div>
+    </div>
+    <div class="card c-green">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-scale"/></svg></span><span class="card-title">小微商户经营</span></div>
+      <div class="card-desc">多账套核算 · 收入分类 · 支付分析 · 简易财报</div>
+    </div>
+    <div class="card c-purple">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-book"/></svg></span><span class="card-title">财务管理教学</span></div>
+      <div class="card-desc">账务模型展示 · 记账实操 · 分析实践 · AI 辅助</div>
+    </div>
+    <div class="card c-orange">
+      <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-trend"/></svg></span><span class="card-title">数据驱动决策</span></div>
+      <div class="card-desc">趋势辅助预算 · 异常及时止损 · 占比优化结构</div>
+    </div>
+  </div>
+  <div class="highlight" style="margin-top:16px">
+    <p><b>大赛契合度：</b>将大数据分析（pandas / numpy / scipy / seaborn）与人工智能（DeepSeek）嵌入财务管理流程，
+    推动记账工具从<b>"被动记录"</b>升级为<b>"主动诊断与建议"</b>。</p>
+  </div>
+</div>
+</div>
+
+<!-- ============================ 19 · 项目总结 ============================ -->
+<div class="slide content-slide" data-slide="19" data-chapter="05 实证总结与展望">
+<div class="slide-content">
+  <h2>项目实证总结<span class="h2-sub">全部数据取自源码与仓库实际统计结果</span></h2>
+  <div class="h2-bar"></div>
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-val" style="color:#818cf8">27,885</div><div class="stat-label">Python 代码行数</div><div class="stat-hint">49 个模块</div></div>
+    <div class="stat-box"><div class="stat-val" style="color:#34d399">9</div><div class="stat-label">功能模块页面</div><div class="stat-hint">QStackedWidget</div></div>
+    <div class="stat-box"><div class="stat-val" style="color:#fbbf24">12</div><div class="stat-label">规范化数据表</div><div class="stat-hint">5 类账务模型</div></div>
+    <div class="stat-box"><div class="stat-val" style="color:#a78bfa">17</div><div class="stat-label">直接依赖库</div><div class="stat-hint">requirements.txt</div></div>
+  </div>
+  <div class="two-col narrow-right" style="margin-top:4px">
+    <div>
+      <h3 style="margin-top:0"><svg class="ic"><use href="#i-chart"/></svg>复杂度集中度（规模 Top 6 模块）</h3>
+      <div class="scale-list files">
+        <div class="scale-row">
+          <span class="scale-name">models/db_backend.py</span>
+          <span class="scale-track"><span class="scale-fill" style="width:100%;background:linear-gradient(90deg,#8b5cf6,#a78bfa)"></span></span>
+          <span class="scale-num">2,098</span>
+        </div>
+        <div class="scale-row">
+          <span class="scale-name">ui/pages/home_page.py</span>
+          <span class="scale-track"><span class="scale-fill" style="width:93.4%;background:linear-gradient(90deg,#6366f1,#818cf8)"></span></span>
+          <span class="scale-num">1,960</span>
+        </div>
+        <div class="scale-row">
+          <span class="scale-name">utils/pdf_report_generator.py</span>
+          <span class="scale-track"><span class="scale-fill" style="width:88.8%;background:linear-gradient(90deg,#3b82f6,#60a5fa)"></span></span>
+          <span class="scale-num">1,862</span>
+        </div>
+        <div class="scale-row">
+          <span class="scale-name">ui/pages/profile_page.py</span>
+          <span class="scale-track"><span class="scale-fill" style="width:69.1%;background:linear-gradient(90deg,#10b981,#34d399)"></span></span>
+          <span class="scale-num">1,449</span>
+        </div>
+        <div class="scale-row">
+          <span class="scale-name">ui/dialogs/db_manager_dialog.py</span>
+          <span class="scale-track"><span class="scale-fill" style="width:66.9%;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></span></span>
+          <span class="scale-num">1,403</span>
+        </div>
+        <div class="scale-row">
+          <span class="scale-name">ui/pages/settings_page.py</span>
+          <span class="scale-track"><span class="scale-fill" style="width:64.3%;background:linear-gradient(90deg,#ef4444,#f87171)"></span></span>
+          <span class="scale-num">1,348</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="highlight" style="margin-top:0">
+        <h3><svg class="ic"><use href="#i-code"/></svg>技术收获</h3>
+        <p>PyQt5 桌面应用全流程 · 策略模式多数据库抽象 · matplotlib / seaborn 高级可视化 ·
+        DeepSeek 提示工程 · Fernet + bcrypt 安全存储 · DBUtils 连接池 · ReportLab 中文 PDF。</p>
+      </div>
+      <div class="highlight">
+        <h3><svg class="ic"><use href="#i-scale"/></svg>专业融合</h3>
+        <p>科目编码遵循会计规范、流水账遵循账务处理准则、月报参考财务管理实务、
+        预算体现管理会计思想——<b>用懂财务的方式写财务软件</b>。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============================ 20 · 未来展望 ============================ -->
+<div class="slide content-slide" data-slide="20" data-chapter="05 实证总结与展望">
+<div class="slide-content">
+  <h2>迭代规划与展望<span class="h2-sub">Roadmap · 按优先级排列的四条演进路线</span></h2>
+  <div class="h2-bar"></div>
+  <div class="two-col">
+    <div>
+      <div class="card c-purple" style="margin-bottom:12px">
+        <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-monitor"/></svg></span><span class="card-title">P1 · 多端覆盖</span></div>
+        <div class="card-desc">移动端 App + RESTful API，与桌面端数据同步</div>
+      </div>
+      <div class="card c-green">
+        <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-cloud"/></svg></span><span class="card-title">P2 · 云同步服务</span></div>
+        <div class="card-desc">端到端加密云同步，支持家庭 / 团队协同记账</div>
+      </div>
+    </div>
+    <div>
+      <div class="card c-orange" style="margin-bottom:12px">
+        <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-sparkles"/></svg></span><span class="card-title">P3 · AI 能力升级</span></div>
+        <div class="card-desc">多模型接入 · 发票 OCR · 语音记账 · 智能分类 · 财务规划报告</div>
+      </div>
+      <div class="card c-red">
+        <div class="card-head"><span class="card-icon-wrap"><svg class="ic"><use href="#i-plug"/></svg></span><span class="card-title">P4 · 插件生态</span></div>
+        <div class="card-desc">开放 Plugin API，支持投资分析 / 税费计算 / 多币种扩展</div>
+      </div>
+    </div>
+  </div>
+  <div class="highlight" style="margin-top:14px">
+    <p><b>近期改进：</b>① 异常检测引入 IQR 稳健统计量与类别内基线，降低小样本误报；
+    ② 补充单元测试与 CI，覆盖账簿重算与方言适配；③ 增加数据质量评分卡。</p>
+  </div>
+</div>
+</div>
+
+<!-- ============================ 21 · 致谢 ============================ -->
+<div class="slide cover-slide" data-slide="21" data-chapter="致谢">
+<div class="slide-content">
+  <div class="cover-badge"><svg class="ic" style="font-size:16px"><use href="#i-check"/></svg>Thanks for Your Attention</div>
+  <h1 style="font-size:52px">敬请批评指正</h1>
+  <div class="subtitle">InEx_System v2.0 · 个人收支管理系统</div>
+  <div class="cover-meta">
+    <span>「数智经管 · 创见未来」创意作品设计大赛</span>
+  </div>
 </div>
 </div>
 
 </div><!-- /slide-container -->
 
-<!-- ========== NAVIGATION ========== -->
+<!-- ============================ NAVIGATION ============================ -->
 <div class="nav">
-<button onclick="prevSlide()" title="上一页 (←)">◀</button>
-<div class="page-indicator" id="pageIndicator">1 / 16</div>
-<button onclick="nextSlide()" title="下一页 (→)">▶</button>
-<div class="dots-row" id="dots"></div>
+  <button onclick="prevSlide()" title="上一页 (←)" aria-label="上一页"><svg class="ic" style="font-size:15px;transform:rotate(180deg)"><use href="#i-arrow-right"/></svg></button>
+  <div class="page-indicator" id="pageIndicator">1 / 22</div>
+  <button onclick="nextSlide()" title="下一页 (→)" aria-label="下一页"><svg class="ic" style="font-size:15px"><use href="#i-arrow-right"/></svg></button>
+  <span class="chapter-label" id="chapterLabel">封面</span>
+  <div class="dots-row" id="dots"></div>
 </div>
-<div class="key-hint">← → 翻页 · F 全屏 · Home/End 首尾 · 点击屏幕边缘翻页</div>
+<div class="key-hint">← → 翻页 · F 全屏 · Home/End 首尾 · 点击屏幕左右边缘翻页</div>
 
 <script>
-// ========== STATE ==========
-let current = 0;
-const slides = document.querySelectorAll('.slide[data-slide]');
-const total = slides.length;
-const progress = document.getElementById('progress');
-const indicator = document.getElementById('pageIndicator');
-const dotsContainer = document.getElementById('dots');
-const timerEl = document.getElementById('timer');
-const startTime = Date.now();
+(function () {
+  'use strict';
 
-// ========== BUILD DOTS ==========
-for (let i = 0; i < total; i++) {
-  const dot = document.createElement('div');
-  dot.className = 'dot' + (i === 0 ? ' active' : '');
-  dot.onclick = () => goTo(i);
-  dotsContainer.appendChild(dot);
-}
+  var current = 0;
+  var slides = document.querySelectorAll('.slide[data-slide]');
+  var total = slides.length;
+  var progress = document.getElementById('progress');
+  var indicator = document.getElementById('pageIndicator');
+  var chapterLabel = document.getElementById('chapterLabel');
+  var dotsContainer = document.getElementById('dots');
+  var timerEl = document.getElementById('timer');
+  var startTime = Date.now();
+  var dots = [];
 
-// ========== NAVIGATION ==========
-function goTo(n) {
-  if (n < 0 || n >= total) return;
-  slides[current].classList.remove('active');
-  document.querySelectorAll('.dot')[current].classList.remove('active');
-  current = n;
-  slides[current].classList.add('active');
-  document.querySelectorAll('.dot')[current].classList.add('active');
-  progress.style.width = ((current + 1) / total * 100) + '%';
-  indicator.textContent = (current + 1) + ' / ' + total;
-}
-
-function nextSlide() { goTo(Math.min(current + 1, total - 1)); }
-function prevSlide() { goTo(Math.max(current - 1, 0)); }
-
-// ========== KEYBOARD ==========
-document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
-    e.preventDefault(); nextSlide();
-  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-    e.preventDefault(); prevSlide();
-  } else if (e.key === 'f' || e.key === 'F') {
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-    else if (document.exitFullscreen) document.exitFullscreen();
-  } else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
-  else if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
-});
-
-// ========== CLICK EDGE ==========
-document.addEventListener('click', e => {
-  if (e.target.closest('.nav') || e.target.closest('.slide-content a') || e.target.closest('button')) return;
-  const w = window.innerWidth;
-  if (e.clientX > w * 0.72) nextSlide();
-  else if (e.clientX < w * 0.28) prevSlide();
-});
-
-// ========== TOUCH ==========
-let touchStartX = 0, touchStartY = 0;
-document.addEventListener('touchstart', e => {
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-}, {passive: true});
-document.addEventListener('touchend', e => {
-  const dx = touchStartX - e.changedTouches[0].clientX;
-  const dy = touchStartY - e.changedTouches[0].clientY;
-  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-    dx > 0 ? nextSlide() : prevSlide();
+  /* ---------- build dots ---------- */
+  for (var i = 0; i < total; i++) {
+    (function (idx) {
+      var dot = document.createElement('div');
+      dot.className = 'dot' + (idx === 0 ? ' active' : '');
+      dot.title = slides[idx].getAttribute('data-chapter') || ('第 ' + (idx + 1) + ' 页');
+      dot.addEventListener('click', function () { goTo(idx); });
+      dotsContainer.appendChild(dot);
+      dots.push(dot);
+    })(i);
   }
-});
 
-// ========== TIMER ==========
-setInterval(() => {
-  const elapsed = Math.floor((Date.now() - startTime) / 1000);
-  const m = Math.floor(elapsed / 60).toString().padStart(2, '0');
-  const s = (elapsed % 60).toString().padStart(2, '0');
-  timerEl.textContent = m + ':' + s;
-}, 1000);
+  /* ---------- navigation ---------- */
+  function goTo(n) {
+    if (n < 0 || n >= total || n === current) {
+      if (n === current && n === 0) { render(0); }
+      return;
+    }
+    render(n);
+  }
 
-// ========== INIT ==========
-goTo(0);
+  function render(n) {
+    slides[current].classList.remove('active');
+    if (dots[current]) dots[current].classList.remove('active');
+    current = n;
+    slides[current].classList.add('active');
+    if (dots[current]) dots[current].classList.add('active');
+    progress.style.width = ((current + 1) / total * 100) + '%';
+    indicator.textContent = (current + 1) + ' / ' + total;
+    chapterLabel.textContent = slides[current].getAttribute('data-chapter') || '';
+  }
+
+  function nextSlide() { if (current < total - 1) render(current + 1); }
+  function prevSlide() { if (current > 0) render(current - 1); }
+
+  /* ---------- keyboard ---------- */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault(); nextSlide();
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') {
+      e.preventDefault(); prevSlide();
+    } else if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      } else if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    } else if (e.key === 'Home') { e.preventDefault(); render(0); }
+    else if (e.key === 'End') { e.preventDefault(); render(total - 1); }
+  });
+
+  /* ---------- table of contents links ---------- */
+  var tocLinks = document.querySelectorAll('.toc-item[data-goto]');
+  for (var t = 0; t < tocLinks.length; t++) {
+    (function (el) {
+      el.addEventListener('click', function () {
+        var target = parseInt(el.getAttribute('data-goto'), 10);
+        if (!isNaN(target)) render(target);
+      });
+    })(tocLinks[t]);
+  }
+
+  /* ---------- click screen edge ---------- */
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('.nav') || e.target.closest('.toc-item') || e.target.closest('button')) return;
+    var w = window.innerWidth;
+    if (e.clientX > w * 0.74) nextSlide();
+    else if (e.clientX < w * 0.26) prevSlide();
+  });
+
+  /* ---------- touch swipe ---------- */
+  var touchStartX = 0, touchStartY = 0;
+  document.addEventListener('touchstart', function (e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    var dx = touchStartX - e.changedTouches[0].clientX;
+    var dy = touchStartY - e.changedTouches[0].clientY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+      if (dx > 0) nextSlide(); else prevSlide();
+    }
+  });
+
+  /* ---------- timer ---------- */
+  setInterval(function () {
+    var elapsed = Math.floor((Date.now() - startTime) / 1000);
+    var m = Math.floor(elapsed / 60).toString().padStart(2, '0');
+    var s = (elapsed % 60).toString().padStart(2, '0');
+    timerEl.textContent = m + ':' + s;
+  }, 1000);
+
+  /* ---------- init ---------- */
+  indicator.textContent = '1 / ' + total;
+  progress.style.width = (1 / total * 100) + '%';
+  chapterLabel.textContent = slides[0].getAttribute('data-chapter') || '';
+  slides[0].classList.add('active');
+})();
 </script>
 </body>
 </html>
