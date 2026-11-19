@@ -38,7 +38,9 @@ class MainWindow(QMainWindow):
         self.current_user = account_number
         # 页面切换动画状态（保存引用防止被 GC 回收）
         self._page_anim = None
-        self._page_opacity_effects = {}
+        # 当前挂有透明特效的页面；QGraphicsEffect 在 setGraphicsEffect(None) 后
+        # 底层 C++ 对象即被 Qt 销毁，绝不可缓存复用，只跟踪 widget 本身
+        self._animating_widget = None
         # 全局非阻塞提示（在 initUI 后创建）
         self._toast = None
 
@@ -605,25 +607,54 @@ class MainWindow(QMainWindow):
         dialog.exec_()
 
     def _animate_page_in(self, widget):
-        """页面切换淡入动画（轻微位移 + 透明度），动画对象保存在实例上避免被回收。"""
+        """页面切换淡入动画（透明度 0→1）。
+
+        关键：QGraphicsOpacityEffect 在 setGraphicsEffect(None) 后底层 C++ 对象会被
+        Qt 销毁，因此绝不能缓存复用 effect，每次动画都必须新建，否则二次切回同一
+        页面时会抛 "wrapped C/C++ object has been deleted" RuntimeError。
+        """
         if widget is None:
             return
-        effect = self._page_opacity_effects.get(id(widget))
-        if effect is None:
-            effect = QGraphicsOpacityEffect(widget)
-            self._page_opacity_effects[id(widget)] = effect
-        widget.setGraphicsEffect(effect)
 
+        # 停止上一段动画并清除其残留特效（stop() 不会触发 finished，需手动清理）
         if self._page_anim is not None:
-            self._page_anim.stop()
-        self._page_anim = QPropertyAnimation(effect, b"opacity")
-        self._page_anim.setDuration(180)
-        self._page_anim.setStartValue(0.0)
-        self._page_anim.setEndValue(1.0)
-        self._page_anim.setEasingCurve(QEasingCurve.OutQuad)
-        # 动画结束后移除 effect，避免影响子控件渲染与性能
-        self._page_anim.finished.connect(lambda w=widget: w.setGraphicsEffect(None))
-        self._page_anim.start()
+            try:
+                self._page_anim.stop()
+            except RuntimeError:
+                pass
+            self._page_anim = None
+        old_widget = getattr(self, '_animating_widget', None)
+        if old_widget is not None:
+            try:
+                old_widget.setGraphicsEffect(None)
+            except RuntimeError:
+                pass
+            self._animating_widget = None
+
+        # 每次新建 effect，不缓存；parent 设为 widget 由 Qt 托管生命周期
+        effect = QGraphicsOpacityEffect(widget)
+        widget.setGraphicsEffect(effect)
+        self._animating_widget = widget
+
+        anim = QPropertyAnimation(effect, b"opacity")
+        self._page_anim = anim
+        anim.setDuration(180)
+        anim.setStartValue(0.0)
+        anim.setEndValue(1.0)
+        anim.setEasingCurve(QEasingCurve.OutQuad)
+
+        def _cleanup(anim_ref=anim, w=widget):
+            # 仅当触发的是当前动画时才清理，防止旧动画的 finished 误清新页面
+            if self._page_anim is anim_ref:
+                try:
+                    w.setGraphicsEffect(None)
+                except RuntimeError:
+                    pass
+                if getattr(self, '_animating_widget', None) is w:
+                    self._animating_widget = None
+
+        anim.finished.connect(_cleanup)
+        anim.start()
 
     def on_sidebar_changed(self, index):
         """侧边栏切换"""
