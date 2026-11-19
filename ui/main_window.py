@@ -65,7 +65,7 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(1600, 900)
 
         # 设置窗口图标
-        icon_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "InEx_System.ico")
+        icon_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "FinTrace.ico")
         if os.path.exists(icon_path):
             self.setWindowIcon(QIcon(icon_path))
 
@@ -964,7 +964,7 @@ class MainWindow(QMainWindow):
         import webbrowser
 
         # 直接打开GitHub Issues页面或邮箱
-        webbrowser.open("mailto:yoho12138@qq.com?subject=InEx_System反馈")
+        webbrowser.open("mailto:yoho12138@qq.com?subject=FinTrace反馈")
         print("[反馈] 打开反馈渠道")
 
     def show_shortcuts_dialog(self):
@@ -1197,7 +1197,7 @@ class AboutDialog(QDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("关于 InEx System")
+        self.setWindowTitle("关于 FinTrace")
         self.setFixedSize(500, 400)
 
         # 仅保留关闭按钮
@@ -1213,7 +1213,7 @@ class AboutDialog(QDialog):
         main_layout.setSpacing(20)
 
         # 应用图标（如果存在）
-        icon_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "InEx_System.ico")
+        icon_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "FinTrace.ico")
         if os.path.exists(icon_path):
             icon_label = QLabel()
             pixmap = QPixmap(icon_path)
@@ -1248,7 +1248,7 @@ class AboutDialog(QDialog):
         info_text.setFont(QFont(UIStyles.FONT_FAMILY, 10))
         info_text.setHtml(f"""
         <div style='text-align: center; color: {UIStyles.TEXT_PRIMARY};'>
-            <p><b>InEx System v2.0</b></p>
+            <p><b>FinTrace v2.0</b></p>
             <p>个人收支管理系统</p>
             <p>开发时间: 2026年</p>
             <br>
@@ -1263,7 +1263,7 @@ class AboutDialog(QDialog):
             <p>• 自动备份机制</p>
             <br>
             <p style='color: {UIStyles.TEXT_SECONDARY}; font-size: 9px;'>
-                版权所有 © 2026 InEx System Team<br>
+                版权所有 © 2026 FinTrace Team<br>
                 联系邮箱: yoho12138@qq.com
             </p>
         </div>

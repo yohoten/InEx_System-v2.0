@@ -98,7 +98,7 @@ class LoginDialog(QDialog):
         self.setFixedSize(850, 520)  # 优化：增大窗口尺寸，提供更好的视觉体验
 
         # 窗口图标
-        icon_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "InEx_System.ico")
+        icon_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "FinTrace.ico")
         if os.path.exists(icon_path):
             self.setWindowIcon(QIcon(icon_path))
 
@@ -107,7 +107,7 @@ class LoginDialog(QDialog):
         self.setModal(True)
 
         # 初始化设置
-        self.settings = QSettings('InExSystem', 'Login')
+        self.settings = QSettings('FinTrace', 'Login')
 
         # 初始化认证管理器（替代硬编码凭据）
         self.auth_manager = AuthManager()
@@ -159,7 +159,7 @@ class LoginDialog(QDialog):
         left_layout.addWidget(title_label)
 
         # 副标题
-        subtitle_label = QLabel("InEx_System v2.0")
+        subtitle_label = QLabel("FinTrace v2.0")
         subtitle_label.setFont(QFont(UIStyles.FONT_FAMILY, 16))  # 优化：字体从15增加到16
         subtitle_label.setAlignment(Qt.AlignCenter)
         subtitle_label.setStyleSheet("color: #E0E0E0;")
@@ -578,7 +578,7 @@ class RegisterDialog(QDialog):
         self.setFixedSize(850, 520)
         
         # 窗口图标
-        icon_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "InEx_System.ico")
+        icon_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "FinTrace.ico")
         if os.path.exists(icon_path):
             self.setWindowIcon(QIcon(icon_path))
             
@@ -618,7 +618,7 @@ class RegisterDialog(QDialog):
         left_layout.addWidget(title_label)
         
         # 副标题
-        subtitle_label = QLabel("InEx_System v2.0")
+        subtitle_label = QLabel("FinTrace v2.0")
         subtitle_label.setFont(QFont(UIStyles.FONT_FAMILY, 16))
         subtitle_label.setAlignment(Qt.AlignCenter)
         subtitle_label.setStyleSheet("color: #E0E0E0;")

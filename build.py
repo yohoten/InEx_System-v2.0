@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-InEx System v2.0 — 打包脚本
+FinTrace v2.0 — 打包脚本
 支持三种模式:
     python build.py                 打包为文件夹 (onedir EXE)
     python build.py --installer     打包为文件夹 + 生成 Inno Setup 安装脚本 (.iss)
@@ -20,12 +20,12 @@ from datetime import datetime
 from pathlib import Path
 
 # ── 项目元数据 ──────────────────────────────────────────
-PROJECT_NAME = "InEx System"
-PROJECT_NAME_SAFE = "InEx_System_v2.0"
+PROJECT_NAME = "FinTrace"
+PROJECT_NAME_SAFE = "FinTrace_v2.0"
 VERSION = "2.0"
 AUTHOR = "yohoten"
-PUBLISHER = "InEx System Team"
-APP_ID = "InExSystem.InEx_System.v2.0"
+PUBLISHER = "FinTrace Team"
+APP_ID = "FinTrace.FinTrace.v2.0"
 DESCRIPTION = "个人收支管理系统"
 COPYRIGHT = f"Copyright (C) 2026 {AUTHOR}"
 DEFAULT_ACCOUNT = "2501033401"
@@ -36,7 +36,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 VENV_DIR = PROJECT_ROOT / ".venv"
 DIST_DIR = PROJECT_ROOT / "dist"
 BUILD_DIR = PROJECT_ROOT / "build"
-ICO_PATH = PROJECT_ROOT / "InEx_System.ico"
+ICO_PATH = PROJECT_ROOT / "FinTrace.ico"
 MAIN_SCRIPT = PROJECT_ROOT / "main.py"
 REQUIREMENTS = PROJECT_ROOT / "requirements.txt"
 OUTPUT_EXE_DIR = DIST_DIR / PROJECT_NAME_SAFE
@@ -185,7 +185,7 @@ EXCLUDES = [
 
 DATA_FILES = [
     ("config.json", "."),
-    ("InEx_System.ico", "."),
+    ("FinTrace.ico", "."),
     # 仅打包必需的数据库，排除 data/backup、data/export、temp_init_data.sql 以减小体积
     ("data/inex.db", "data"),
 ]
@@ -201,7 +201,7 @@ for kf in ["secret.key", "connection.key"]:
 def build_exe():
     """PyInstaller onedir 打包"""
     print("\n" + "=" * 56)
-    print("  InEx System v2.0 — EXE 打包 (onedir)")
+    print("  FinTrace v2.0 — EXE 打包 (onedir)")
     print("=" * 56)
 
     ensure_pyinstaller()
@@ -271,7 +271,7 @@ def build_exe():
 def generate_iss():
     """生成 Inno Setup .iss 安装脚本"""
     print("\n" + "=" * 56)
-    print("  InEx System v2.0 — Inno Setup 安装包")
+    print("  FinTrace v2.0 — Inno Setup 安装包")
     print("=" * 56)
 
     # 先确保 EXE 已打包
@@ -292,7 +292,7 @@ def generate_iss():
 #define MyAppName "{PROJECT_NAME}"
 #define MyAppVersion "{VERSION}"
 #define MyAppPublisher "{PUBLISHER}"
-#define MyAppURL "https://github.com/yohoten/InEx_System"
+#define MyAppURL "https://github.com/yohoten/FinTrace"
 #define MyAppExeName "{PROJECT_NAME_SAFE}.exe"
 #define MyAppId "{APP_ID}"
 #define MyAppDescription "{DESCRIPTION}"
@@ -306,11 +306,11 @@ DefaultDirName={{pf}}\\{{#MyAppName}}
 DefaultGroupName={{#MyAppName}}
 AllowNoIcons=yes
 OutputDir=dist
-OutputBaseFilename=InEx_System_v{VERSION}_Setup
+OutputBaseFilename=FinTrace_v{VERSION}_Setup
 Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern
-SetupIconFile=InEx_System.ico
+SetupIconFile=FinTrace.ico
 UninstallDisplayIcon={{app}}\\{PROJECT_NAME_SAFE}.exe
 PrivilegesRequiredOverridesAllowed=commandline dialog
 ArchitecturesInstallIn64BitMode=x64compatible
@@ -364,7 +364,7 @@ end;
      {ISS_OUTPUT}
 
   3. 点击 Build → Compile (Ctrl+F9)
-     生成的安装包位于: dist\\InEx_System_v{VERSION}_Setup.exe
+     生成的安装包位于: dist\\FinTrace_v{VERSION}_Setup.exe
 
   4. 双击安装包即可安装到 Program Files,
      自动创建桌面快捷方式和开始菜单项.

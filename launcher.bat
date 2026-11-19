@@ -1,15 +1,15 @@
 @echo off
 chcp 936 >nul
 setlocal enabledelayedexpansion
-title InEx System v2.0
+title FinTrace v2.0
 
 :: ============================================================
-::  InEx System v2.0 - Startup Script
+::  FinTrace v2.0 - Startup Script
 ::  Author : yohoten (S-ID: 12607320270457)
 ::  Usage  :
-::    InEx_System_Launcher.bat             正常启动
-::    InEx_System_Launcher.bat /fast       跳过检查, 直接启动
-::    InEx_System_Launcher.bat /install    仅安装/更新依赖
+::    launcher.bat             正常启动
+::    launcher.bat /fast       跳过检查, 直接启动
+::    launcher.bat /install    仅安装/更新依赖
 :: ============================================================
 
 :: ---- 命令行参数 ------------------------------------------
@@ -62,7 +62,7 @@ if defined INSTALL_ONLY goto :install
 :: ============================================================
 echo.
 echo   ================================================
-echo         InEx System v2.0
+echo         FinTrace v2.0
 echo         Python: %VENV_DIR%
 echo   ================================================
 echo.

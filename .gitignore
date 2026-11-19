@@ -61,7 +61,7 @@ config.local.json
 
 # PyInstaller
 *.spec
-InEx_System*/
+FinTrace*/
 
 # Temporary files
 *.tmp

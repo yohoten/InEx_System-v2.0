@@ -4,12 +4,12 @@
 ; 需要 Inno Setup 6+: https://jrsoftware.org/isinfo.php
 ; ─────────────────────────────────────────────────────────
 
-#define MyAppName "InEx System"
+#define MyAppName "FinTrace"
 #define MyAppVersion "2.0"
-#define MyAppPublisher "InEx System Team"
-#define MyAppURL "https://github.com/yohoten/InEx_System"
-#define MyAppExeName "InEx_System_v2.0.exe"
-#define MyAppId "InExSystem.InEx_System.v2.0"
+#define MyAppPublisher "FinTrace Team"
+#define MyAppURL "https://github.com/yohoten/FinTrace"
+#define MyAppExeName "FinTrace_v2.0.exe"
+#define MyAppId "FinTrace.FinTrace.v2.0"
 #define MyAppDescription "个人收支管理系统"
 
 [Setup]
@@ -21,12 +21,12 @@ DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 OutputDir=dist
-OutputBaseFilename=InEx_System_v2.0_Setup
+OutputBaseFilename=FinTrace_v2.0_Setup
 Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern
-SetupIconFile=InEx_System.ico
-UninstallDisplayIcon={app}\InEx_System_v2.0.exe
+SetupIconFile=FinTrace.ico
+UninstallDisplayIcon={app}\FinTrace_v2.0.exe
 PrivilegesRequiredOverridesAllowed=commandline dialog
 ArchitecturesInstallIn64BitMode=x64compatible
 
@@ -39,16 +39,16 @@ Name: "quicklaunchicon"; Description: "创建开始菜单快捷方式"; GroupDes
 
 [Files]
 ; 注意: 请将下方 Source 路径改为实际的打包输出目录
-Source: "dist\InEx_System_v2.0\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\FinTrace_v2.0\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\InEx System"; Filename: "{app}\InEx_System_v2.0.exe"; WorkingDir: "{app}"
-Name: "{group}\卸载 InEx System"; Filename: "{uninstallexe}"
-Name: "{autodesktop}\InEx System"; Filename: "{app}\InEx_System_v2.0.exe"; Tasks: desktopicon; WorkingDir: "{app}"
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\InEx System"; Filename: "{app}\InEx_System_v2.0.exe"; Tasks: quicklaunchicon; WorkingDir: "{app}"
+Name: "{group}\FinTrace"; Filename: "{app}\FinTrace_v2.0.exe"; WorkingDir: "{app}"
+Name: "{group}\卸载 FinTrace"; Filename: "{uninstallexe}"
+Name: "{autodesktop}\FinTrace"; Filename: "{app}\FinTrace_v2.0.exe"; Tasks: desktopicon; WorkingDir: "{app}"
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\FinTrace"; Filename: "{app}\FinTrace_v2.0.exe"; Tasks: quicklaunchicon; WorkingDir: "{app}"
 
 [Run]
-Filename: "{app}\InEx_System_v2.0.exe"; Description: "启动 InEx System"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\FinTrace_v2.0.exe"; Description: "启动 FinTrace"; Flags: nowait postinstall skipifsilent
 
 [Code]
 function InitializeSetup: Boolean;

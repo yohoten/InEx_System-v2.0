@@ -746,7 +746,7 @@ class PDFReportGenerator:
             elements.append(Spacer(1, 15))
 
         # 标题
-        elements.append(Paragraph("InEx System", self.styles['ReportTitle']))
+        elements.append(Paragraph("FinTrace", self.styles['ReportTitle']))
         elements.append(Paragraph("财务分析报告", ParagraphStyle(
             'MainTitle', parent=self.styles['ReportTitle'],
             fontSize=32, leading=40, textColor=self.TEXT_DARK
@@ -820,7 +820,7 @@ class PDFReportGenerator:
         elements.append(HRFlowable(width="100%", thickness=0.5,
                                    color=self.BORDER_COLOR, spaceAfter=10))
         elements.append(Paragraph(
-            "本报告由 InEx System v2.0 自动生成 · 数据来源于本地数据库",
+            "本报告由 FinTrace v2.0 自动生成 · 数据来源于本地数据库",
             self.styles['FooterStyle']))
         elements.append(Paragraph(
             "报告包含：财务概况 · 收支趋势 · 分类分析 · AI智能建议",
@@ -1704,7 +1704,7 @@ class PDFReportGenerator:
             self.styles['BodyText2']
         ))
         elements.append(Paragraph(
-            "—— InEx System v2.0 · AI 智能分析引擎 ——",
+            "—— FinTrace v2.0 · AI 智能分析引擎 ——",
             self.styles['FooterStyle']
         ))
         return elements
@@ -1836,8 +1836,8 @@ class PDFReportGenerator:
             bottomMargin=0.8*inch,
             leftMargin=0.8*inch,
             rightMargin=0.8*inch,
-            title='InEx System - 财务分析报告',
-            author='InEx System v2.0'
+            title='FinTrace - 财务分析报告',
+            author='FinTrace v2.0'
         )
 
         # 3. 构建所有章节

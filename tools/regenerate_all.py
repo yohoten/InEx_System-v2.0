@@ -166,7 +166,7 @@ def generate_monthly_report_for_all(conn):
 
 def main():
     print("=" * 60)
-    print("  InEx System - 批量数据重建工具")
+    print("  FinTrace - 批量数据重建工具")
     print(f"  时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"  数据库: {DB_PATH}")
     print("=" * 60)

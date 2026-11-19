@@ -535,7 +535,7 @@ class EnhancedSybaseBackend(DatabaseBackend):
 ║    3. 点击 \"添加\"                                      ║
 ║    4. 选择 \"Adaptive Server Anywhere 9.0\"             ║
 ║    5. 填写配置：                                         ║
-║       - Data Source Name: InExSystem                     ║
+║       - Data Source Name: FinTrace                     ║
 ║       - User ID: dba                                     ║
 ║       - Password: sql                                    ║
 ║       - Database File: 您的数据库路径                     ║
