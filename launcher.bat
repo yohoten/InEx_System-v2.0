@@ -1,10 +1,10 @@
 @echo off
 chcp 936 >nul
 setlocal enabledelayedexpansion
-title FinTrace v2.0
+title FinTrace v2.1.0
 
 :: ============================================================
-::  FinTrace v2.0 - Startup Script
+::  FinTrace v2.1.0 - Startup Script
 ::  Author : yohoten (S-ID: 12607320270457)
 ::  Usage  :
 ::    launcher.bat             Õý³£Æô¶¯
@@ -62,7 +62,7 @@ if defined INSTALL_ONLY goto :install
 :: ============================================================
 echo.
 echo   ================================================
-echo         FinTrace v2.0
+echo         FinTrace v2.1.0
 echo         Python: %VENV_DIR%
 echo   ================================================
 echo.

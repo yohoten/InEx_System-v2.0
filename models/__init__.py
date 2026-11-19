@@ -9,7 +9,7 @@ from models.db_pool import SQLiteConnectionPool, ConnectionContextManager
 from models.budget_manager import BudgetManager, BudgetAlert
 from models.config import ConfigManager
 
-__version__ = '2.0'
+__version__ = '2.1.0'
 __author__ = '滕宇豪'
 
 __all__ = [

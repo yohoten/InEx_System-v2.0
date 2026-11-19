@@ -87,7 +87,7 @@ class SettingsFeaturesMixin:
             
             settings_data = {
                 "export_time": datetime.now().isoformat(),
-                "version": "2.0",
+                "version": "2.1.0",
                 "database": {
                     "type": db_config.get('type', 'SQLite'),
                     "path": db_config.get('path', ''),

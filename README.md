@@ -125,8 +125,8 @@
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/yohoten/FinTrace-v2.0.git
-cd FinTrace-v2.0
+git clone https://github.com/yohoten/FinTrace-v2.1.0.git
+cd FinTrace-v2.1.0
 
 # 2. 创建虚拟环境并安装依赖
 python -m venv .venv
@@ -162,21 +162,21 @@ python build.py --installer     # 打包 + 生成 Inno Setup 安装脚本
 python build.py --clean         # 清理构建产物
 ```
 
-产物输出至 `dist/FinTrace_v2.0/FinTrace_v2.0.exe`。
+产物输出至 `dist/FinTrace_v2.1.0/FinTrace_v2.1.0.exe`。
 
 ---
 
 ## 📁 目录结构
 
 ```
-FinTrace v2.0_26041800/
+FinTrace v2.1.0_26041800/
 ├── main.py                      # 程序入口（HighDPI、启动画面、登录流程）
 ├── config.json                  # 系统配置（数据库/UI/日志/AI 加密存储）
 ├── requirements.txt             # 依赖清单
 ├── build.py                     # PyInstaller 打包脚本
 ├── launcher.bat                 # 一键启动脚本
-├── FinTrace_v2.0.spec        # PyInstaller 配置
-├── FinTrace_v2.0_installer.iss  # Inno Setup 安装脚本
+├── FinTrace_v2.1.0.spec        # PyInstaller 配置
+├── FinTrace_v2.1.0_installer.iss  # Inno Setup 安装脚本
 ├── FinTrace.ico              # 应用图标
 ├── index.html                   # 串讲演示页面（网页版项目介绍）
 ├── models/                      # 数据层（MVC 的 M）

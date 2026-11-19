@@ -54,7 +54,7 @@ class ConfigManager:
             },
             'system': {
                 'company_name': '收支管理系统',
-                'version': '2.0',
+                'version': '2.1.0',
                 'author': '滕宇豪',
                 'student_id': '0457',
                 'class': '大数据与财务管理 03 班'

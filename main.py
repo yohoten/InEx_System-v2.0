@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 if sys.platform == 'win32':
     import ctypes
     # 设置应用程序的 AppUserModelID
-    myappid = 'FinTrace.FinTrace.2.0'  # 任意字符串，建议格式：组织名.应用名.版本号
+    myappid = 'FinTrace.FinTrace.2.1.0'  # 任意字符串，建议格式：组织名.应用名.版本号
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 from PyQt5.QtWidgets import QApplication, QSplashScreen
@@ -65,7 +65,7 @@ def create_splash_screen():
     painter.setPen(QColor("#7c8aff"))
     title_font = QFont("Microsoft YaHei", 26, QFont.Bold)
     painter.setFont(title_font)
-    painter.drawText(QRect(0, icon_y + icon_size + 10 if os.path.exists(icon_path) else 140, SPLASH_W, 50), Qt.AlignCenter, "FinTrace v2.0")
+    painter.drawText(QRect(0, icon_y + icon_size + 10 if os.path.exists(icon_path) else 140, SPLASH_W, 50), Qt.AlignCenter, "FinTrace v2.1.0")
 
     # 副标题
     painter.setPen(QColor("#a0a8d0"))
@@ -88,7 +88,7 @@ def main():
         app = QApplication(sys.argv)
         app.setApplicationName("收支管理系统")
         app.setOrganizationName("FinTrace")
-        app.setApplicationVersion("2.0")
+        app.setApplicationVersion("2.1.0")
         
         # 设置应用程序图标
         icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "FinTrace.ico")

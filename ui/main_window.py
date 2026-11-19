@@ -953,7 +953,7 @@ class MainWindow(QMainWindow):
 
         try:
             # 这里可以连接到GitHub API或其他更新服务器
-            QMessageBox.information(self, "检查更新", "当前已是最新版本 (v2.0)")
+            QMessageBox.information(self, "检查更新", "当前已是最新版本 (v2.1.0)")
             print("[更新] 检查更新完成")
         except Exception as e:
             QMessageBox.warning(self, "警告", f"检查更新失败:\n{str(e)}")
@@ -1229,7 +1229,7 @@ class AboutDialog(QDialog):
         main_layout.addWidget(title_label)
 
         # 版本信息
-        version_label = QLabel("版本: v2.0")
+        version_label = QLabel("版本: v2.1.0")
         version_label.setFont(QFont(UIStyles.FONT_FAMILY, 11))
         version_label.setAlignment(Qt.AlignCenter)
         version_label.setStyleSheet(f"color: {UIStyles.TEXT_SECONDARY};")
@@ -1248,7 +1248,7 @@ class AboutDialog(QDialog):
         info_text.setFont(QFont(UIStyles.FONT_FAMILY, 10))
         info_text.setHtml(f"""
         <div style='text-align: center; color: {UIStyles.TEXT_PRIMARY};'>
-            <p><b>FinTrace v2.0</b></p>
+            <p><b>FinTrace v2.1.0</b></p>
             <p>个人收支管理系统</p>
             <p>开发时间: 2026年</p>
             <br>

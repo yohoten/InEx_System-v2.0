@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-FinTrace v2.0 — 打包脚本
+FinTrace v2.1.0 — 打包脚本
 支持三种模式:
     python build.py                 打包为文件夹 (onedir EXE)
     python build.py --installer     打包为文件夹 + 生成 Inno Setup 安装脚本 (.iss)
@@ -21,11 +21,11 @@ from pathlib import Path
 
 # ── 项目元数据 ──────────────────────────────────────────
 PROJECT_NAME = "FinTrace"
-PROJECT_NAME_SAFE = "FinTrace_v2.0"
-VERSION = "2.0"
+PROJECT_NAME_SAFE = "FinTrace_v2.1.0"
+VERSION = "2.1.0"
 AUTHOR = "yohoten"
 PUBLISHER = "FinTrace Team"
-APP_ID = "FinTrace.FinTrace.v2.0"
+APP_ID = "FinTrace.FinTrace.v2.1.0"
 DESCRIPTION = "个人收支管理系统"
 COPYRIGHT = f"Copyright (C) 2026 {AUTHOR}"
 DEFAULT_ACCOUNT = "2501033401"
@@ -201,7 +201,7 @@ for kf in ["secret.key", "connection.key"]:
 def build_exe():
     """PyInstaller onedir 打包"""
     print("\n" + "=" * 56)
-    print("  FinTrace v2.0 — EXE 打包 (onedir)")
+    print("  FinTrace v2.1.0 — EXE 打包 (onedir)")
     print("=" * 56)
 
     ensure_pyinstaller()
@@ -271,7 +271,7 @@ def build_exe():
 def generate_iss():
     """生成 Inno Setup .iss 安装脚本"""
     print("\n" + "=" * 56)
-    print("  FinTrace v2.0 — Inno Setup 安装包")
+    print("  FinTrace v2.1.0 — Inno Setup 安装包")
     print("=" * 56)
 
     # 先确保 EXE 已打包

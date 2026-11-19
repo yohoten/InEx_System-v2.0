@@ -820,7 +820,7 @@ class PDFReportGenerator:
         elements.append(HRFlowable(width="100%", thickness=0.5,
                                    color=self.BORDER_COLOR, spaceAfter=10))
         elements.append(Paragraph(
-            "本报告由 FinTrace v2.0 自动生成 · 数据来源于本地数据库",
+            "本报告由 FinTrace v2.1.0 自动生成 · 数据来源于本地数据库",
             self.styles['FooterStyle']))
         elements.append(Paragraph(
             "报告包含：财务概况 · 收支趋势 · 分类分析 · AI智能建议",
@@ -1704,7 +1704,7 @@ class PDFReportGenerator:
             self.styles['BodyText2']
         ))
         elements.append(Paragraph(
-            "—— FinTrace v2.0 · AI 智能分析引擎 ——",
+            "—— FinTrace v2.1.0 · AI 智能分析引擎 ——",
             self.styles['FooterStyle']
         ))
         return elements
@@ -1837,7 +1837,7 @@ class PDFReportGenerator:
             leftMargin=0.8*inch,
             rightMargin=0.8*inch,
             title='FinTrace - 财务分析报告',
-            author='FinTrace v2.0'
+            author='FinTrace v2.1.0'
         )
 
         # 3. 构建所有章节

@@ -6,7 +6,7 @@
 
 from utils.ai_analyzer import SpendingAnalyzer
 
-__version__ = '1.0'
+__version__ = '2.1.0'
 
 __all__ = [
     'SpendingAnalyzer'

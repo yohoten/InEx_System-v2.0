@@ -159,7 +159,7 @@ class LoginDialog(QDialog):
         left_layout.addWidget(title_label)
 
         # 副标题
-        subtitle_label = QLabel("FinTrace v2.0")
+        subtitle_label = QLabel("FinTrace v2.1.0")
         subtitle_label.setFont(QFont(UIStyles.FONT_FAMILY, 16))  # 优化：字体从15增加到16
         subtitle_label.setAlignment(Qt.AlignCenter)
         subtitle_label.setStyleSheet("color: #E0E0E0;")
@@ -618,7 +618,7 @@ class RegisterDialog(QDialog):
         left_layout.addWidget(title_label)
         
         # 副标题
-        subtitle_label = QLabel("FinTrace v2.0")
+        subtitle_label = QLabel("FinTrace v2.1.0")
         subtitle_label.setFont(QFont(UIStyles.FONT_FAMILY, 16))
         subtitle_label.setAlignment(Qt.AlignCenter)
         subtitle_label.setStyleSheet("color: #E0E0E0;")
