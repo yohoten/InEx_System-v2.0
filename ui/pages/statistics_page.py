@@ -21,8 +21,14 @@ class StatisticsPage(QWidget):
         super().__init__()
         self._cache = {}  # 数据缓存 {account: {records, timestamp}}
         self.initUI()
-        self.load_charts()
-    
+        self._data_loaded = False
+
+    def ensure_loaded(self):
+        """首次显示时才加载图表，避免启动时阻塞"""
+        if not self._data_loaded:
+            self._data_loaded = True
+            self.load_charts()
+
     def initUI(self):
         """初始化 UI"""
         layout = QVBoxLayout()

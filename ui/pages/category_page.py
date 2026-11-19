@@ -20,8 +20,14 @@ class CategoryPage(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
-        self.load_data()
-    
+        self._data_loaded = False
+
+    def ensure_loaded(self):
+        """首次显示时才加载数据，避免启动时阻塞"""
+        if not self._data_loaded:
+            self._data_loaded = True
+            self.load_data()
+
     def initUI(self):
         """初始化 UI"""
         layout = QVBoxLayout()

@@ -7,9 +7,10 @@ from PyQt5.QtWidgets import (QMainWindow, QWidget, QHBoxLayout, QListWidget, QLi
                              QStatusBar, QLabel, QMessageBox, QFrame, QVBoxLayout,
                              QTableWidget, QTableWidgetItem, QHeaderView, QPushButton,
                              QApplication, QDialog, QGridLayout, QTextEdit, QSizePolicy,
-                             QInputDialog, QComboBox)
+                             QInputDialog, QComboBox, QGraphicsOpacityEffect)
 from PyQt5.QtGui import (QFont, QPixmap, QColor, QPalette, QIcon, QDesktopServices)
-from PyQt5.QtCore import (Qt, QSize, QUrl, QTimer, QDateTime, pyqtSignal)
+from PyQt5.QtCore import (Qt, QSize, QUrl, QTimer, QDateTime, pyqtSignal,
+                          QPropertyAnimation, QEasingCurve, QParallelAnimationGroup)
 import sys
 import os
 
@@ -35,6 +36,11 @@ class MainWindow(QMainWindow):
     def __init__(self, account_number='2501033401'):
         super().__init__()
         self.current_user = account_number
+        # 页面切换动画状态（保存引用防止被 GC 回收）
+        self._page_anim = None
+        self._page_opacity_effects = {}
+        # 全局非阻塞提示（在 initUI 后创建）
+        self._toast = None
 
         # 设置数据库管理器的当前账套号
         db_manager.current_account = account_number
@@ -148,6 +154,10 @@ class MainWindow(QMainWindow):
 
         # 应用主题到侧边栏等主题感知区域
         self._apply_theme_to_chrome()
+
+        # 全局非阻塞提示组件（用于主题/字体等轻量反馈）
+        from ui.widgets.toast import Toast
+        self._toast = Toast(self)
 
     def _apply_theme_to_chrome(self):
         """根据当前主题重绘侧边栏（含渐变选中态）等核心区域。"""
@@ -594,11 +604,40 @@ class MainWindow(QMainWindow):
         dialog = GlobalSearchDialog(self)
         dialog.exec_()
 
+    def _animate_page_in(self, widget):
+        """页面切换淡入动画（轻微位移 + 透明度），动画对象保存在实例上避免被回收。"""
+        if widget is None:
+            return
+        effect = self._page_opacity_effects.get(id(widget))
+        if effect is None:
+            effect = QGraphicsOpacityEffect(widget)
+            self._page_opacity_effects[id(widget)] = effect
+        widget.setGraphicsEffect(effect)
+
+        if self._page_anim is not None:
+            self._page_anim.stop()
+        self._page_anim = QPropertyAnimation(effect, b"opacity")
+        self._page_anim.setDuration(180)
+        self._page_anim.setStartValue(0.0)
+        self._page_anim.setEndValue(1.0)
+        self._page_anim.setEasingCurve(QEasingCurve.OutQuad)
+        # 动画结束后移除 effect，避免影响子控件渲染与性能
+        self._page_anim.finished.connect(lambda w=widget: w.setGraphicsEffect(None))
+        self._page_anim.start()
+
     def on_sidebar_changed(self, index):
         """侧边栏切换"""
         self.stacked_widget.setCurrentIndex(index)
         page_name = self.sidebar.item(index).text().split(' ')[1] if ' ' in self.sidebar.item(index).text() else f"页面{index+1}"
         self.statusBar().showMessage(f"已切换到{page_name}", 2000)
+
+        # 懒加载：首次切换到该页面时才加载数据
+        current = self.stacked_widget.currentWidget()
+        if current is not None and hasattr(current, 'ensure_loaded'):
+            current.ensure_loaded()
+        # 交互动效：页面淡入
+        self._animate_page_in(current)
+
         print(f"[导航] 切换到{page_name}")
 
     def open_db_connection_dialog(self):
@@ -1107,23 +1146,26 @@ class MainWindow(QMainWindow):
 
         theme_manager.set_theme(target)
         self._apply_theme_to_chrome()
+        if self._toast is not None:
+            self._toast.success(f"已切换到{label}主题")
         from utils.logger import log_manager
         log_manager.info(f"[主题] 已切换到 {label}")
 
     def change_font_size(self, size_name):
         """改变字体大小"""
-        from PyQt5.QtWidgets import QMessageBox
-
         if "小" in size_name:
             font_size = 9
         elif "中" in size_name:
             font_size = 11
         elif "大" in size_name:
             font_size = 13
+        else:
+            font_size = 11
 
         app_font = QFont(UIStyles.FONT_FAMILY, font_size)
         QApplication.setFont(app_font)
-        QMessageBox.information(self, "字体", f"字体大小已设置为{size_name}，重启后生效")
+        if self._toast is not None:
+            self._toast.info(f"字体已设置为{size_name}，重启后生效")
         print(f"[字体] 设置为{size_name}")
 
     def toggle_sidebar(self):
@@ -1174,6 +1216,11 @@ class MainWindow(QMainWindow):
         if 0 <= index < self.stacked_widget.count():
             self.stacked_widget.setCurrentIndex(index)
             self.sidebar.setCurrentRow(index)
+            # 懒加载：确保目标页面数据已加载
+            current = self.stacked_widget.currentWidget()
+            if current is not None and hasattr(current, 'ensure_loaded'):
+                current.ensure_loaded()
+            self._animate_page_in(current)
             page_names = ["首页", "分类管理", "收入记账", "支出记账",
                          "流水账", "月报表", "统计分析", "个人中心", "系统设置"]
             print(f"[导航] 切换到{page_names[index]}")

@@ -393,24 +393,31 @@ class BaseRecordPage(QWidget):
         raise NotImplementedError("子类必须实现此方法")
     
     def _render_table(self, records):
-        """渲染表格"""
+        """渲染表格（批处理：关闭重绘避免逐格刷新卡顿）"""
         # 设置表头
         headers = self._get_table_headers()
-        self.table.setColumnCount(len(headers))
-        self.table.setHorizontalHeaderLabels(headers)
-        self.table.setRowCount(len(records))
-        
-        # 填充数据
-        for row_idx, record in enumerate(records):
-            for col_idx, field in enumerate(self._get_table_fields()):
-                value = record.get(field, '')
-                item = QTableWidgetItem(str(value))
-                item.setTextAlignment(Qt.AlignCenter)
-                self.table.setItem(row_idx, col_idx, item)
-        
-        # 调整列宽
-        header = self.table.horizontalHeader()
-        header.setSectionResizeMode(QHeaderView.Stretch)
+        self.table.setUpdatesEnabled(False)
+        self.table.blockSignals(True)
+        try:
+            self.table.setColumnCount(len(headers))
+            self.table.setHorizontalHeaderLabels(headers)
+            self.table.setRowCount(len(records))
+
+            # 填充数据
+            fields = self._get_table_fields()
+            for row_idx, record in enumerate(records):
+                for col_idx, field in enumerate(fields):
+                    value = record.get(field, '')
+                    item = QTableWidgetItem(str(value))
+                    item.setTextAlignment(Qt.AlignCenter)
+                    self.table.setItem(row_idx, col_idx, item)
+
+            # 调整列宽
+            header = self.table.horizontalHeader()
+            header.setSectionResizeMode(QHeaderView.Stretch)
+        finally:
+            self.table.blockSignals(False)
+            self.table.setUpdatesEnabled(True)
     
     def _get_table_headers(self):
         """获取表格表头（子类实现）"""

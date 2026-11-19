@@ -176,6 +176,23 @@ QProgressBar {{
     color: {text_primary};
 }}
 QProgressBar::chunk {{ background-color: {primary}; border-radius: 6px; }}
+QToolButton {{
+    background-color: transparent;
+    color: {text_primary};
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 4px;
+}}
+QToolButton:hover {{ background-color: {bg_hover}; border-color: {border}; }}
+QToolButton:pressed {{ background-color: {bg_selected}; }}
+QDialogButtonBox QPushButton {{ min-width: 80px; }}
+QLineEdit::placeholder, QTextEdit::placeholder {{ color: {text_disabled}; }}
+QAbstractItemView {{ outline: none; }}
+QTreeWidget::item {{ padding: 4px; border-radius: 4px; }}
+QTreeWidget::item:hover {{ background-color: {bg_hover}; }}
+QTreeWidget::item:selected {{ background-color: {primary}; color: {text_on_accent}; }}
+QSplitter::handle {{ background-color: {border}; }}
+QFrame[frameShape="4"] {{ color: {border}; }}
 """
 
 

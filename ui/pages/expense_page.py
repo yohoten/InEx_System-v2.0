@@ -33,8 +33,14 @@ class ExpensePage(QWidget):
         self.initUI()
         # 创建Toast组件
         self.toast = Toast(self)
-        self.load_data()
-    
+        self._data_loaded = False
+
+    def ensure_loaded(self):
+        """首次显示时才加载数据，避免启动时阻塞"""
+        if not self._data_loaded:
+            self._data_loaded = True
+            self.load_data()
+
     def initUI(self):
         """初始化 UI - 智能默认值"""
         layout = QVBoxLayout()
@@ -193,33 +199,35 @@ class ExpensePage(QWidget):
         """加载支出数据（分页：首次500条）"""
         print("[支出管理] 加载数据...")
 
-        self.table.setRowCount(0)
         records = db_manager.get_expense_records(limit=500)
-        
-        for record in records:
-            row = self.table.rowCount()
-            self.table.insertRow(row)
-            
-            # record: (djh, rq, zc_name, je, zf_name, bz, zc_code, zf_code) - 8个字段
-            djh, rq, zc_name, je, zf_name, bz, zc_code, zf_code = record
-            
-            # 第0列：复选框
-            checkbox = QTableWidgetItem()
-            checkbox.setCheckState(Qt.Unchecked)
-            checkbox.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-            self.table.setItem(row, 0, checkbox)
 
-            # 第1列：账套号
-            self.table.setItem(row, 1, QTableWidgetItem(db_manager.current_account))
-            self.table.setItem(row, 2, QTableWidgetItem(djh))
-            self.table.setItem(row, 3, QTableWidgetItem(str(rq)))
-            self.table.setItem(row, 4, QTableWidgetItem(zc_code if zc_code else "--"))  # zc_code
-            self.table.setItem(row, 5, QTableWidgetItem(zc_name if zc_name else ""))
-            self.table.setItem(row, 6, QTableWidgetItem(f"¥{je:.2f}" if je else "¥0.00"))
-            self.table.setItem(row, 7, QTableWidgetItem(zf_code if zf_code else "--"))  # zf_code
-            self.table.setItem(row, 8, QTableWidgetItem(zf_name if zf_name else ""))
-            self.table.setItem(row, 9, QTableWidgetItem(bz if bz else ""))
-        
+        # 批处理：一次设置行数并关闭重绘，避免逐行 insertRow 触发多次重绘
+        self.table.setUpdatesEnabled(False)
+        self.table.blockSignals(True)
+        try:
+            self.table.setRowCount(len(records))
+            for row, record in enumerate(records):
+                # record: (djh, rq, zc_name, je, zf_name, bz, zc_code, zf_code) - 8个字段
+                djh, rq, zc_name, je, zf_name, bz, zc_code, zf_code = record
+
+                checkbox = QTableWidgetItem()
+                checkbox.setCheckState(Qt.Unchecked)
+                checkbox.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+                self.table.setItem(row, 0, checkbox)
+
+                self.table.setItem(row, 1, QTableWidgetItem(db_manager.current_account))
+                self.table.setItem(row, 2, QTableWidgetItem(djh))
+                self.table.setItem(row, 3, QTableWidgetItem(str(rq)))
+                self.table.setItem(row, 4, QTableWidgetItem(zc_code if zc_code else "--"))
+                self.table.setItem(row, 5, QTableWidgetItem(zc_name if zc_name else ""))
+                self.table.setItem(row, 6, QTableWidgetItem(f"¥{je:.2f}" if je else "¥0.00"))
+                self.table.setItem(row, 7, QTableWidgetItem(zf_code if zf_code else "--"))
+                self.table.setItem(row, 8, QTableWidgetItem(zf_name if zf_name else ""))
+                self.table.setItem(row, 9, QTableWidgetItem(bz if bz else ""))
+        finally:
+            self.table.blockSignals(False)
+            self.table.setUpdatesEnabled(True)
+
         print(f"[支出管理] 加载完成，共{len(records)}条记录")
     
     def query_data(self):

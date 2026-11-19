@@ -30,8 +30,14 @@ class MonthlyReportPage(QWidget):
         self.report_data = []
         self._is_being_deleted = False  # 标记是否正在销毁
         self.initUI()
-        self.load_data()
-    
+        self._data_loaded = False
+
+    def ensure_loaded(self):
+        """首次显示时才加载数据，避免启动时阻塞"""
+        if not self._data_loaded:
+            self._data_loaded = True
+            self.load_data()
+
     def closeEvent(self, event):
         """页面关闭事件 - 清理资源"""
         self._cleanup_resources()

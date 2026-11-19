@@ -24,8 +24,14 @@ class CashFlowPage(QWidget):
         super().__init__()
         self.toast = Toast(self)  # 初始化Toast
         self.initUI()
-        self.load_data()
-    
+        self._data_loaded = False
+
+    def ensure_loaded(self):
+        """首次显示时才加载数据，避免启动时阻塞"""
+        if not self._data_loaded:
+            self._data_loaded = True
+            self.load_data()
+
     def initUI(self):
         """初始化 UI"""
         layout = QVBoxLayout()
@@ -157,53 +163,43 @@ class CashFlowPage(QWidget):
         """加载流水账数据（分页：首次500条）"""
         print("[流水账] 加载数据...")
 
-        self.table.setRowCount(0)
         records = db_manager.get_cash_flow(limit=500)
-        
-        for record in records:
-            row = self.table.rowCount()
-            self.table.insertRow(row)
-            
-            # record: (rq, xh, srzc, djh, sr_code, srje, zc_code, zcje, ye, zf_code, bz)
-            rq, xh, srzc, djh, sr_code, srje, zc_code, zcje, ye, zf_code, bz = record
-            
-            # 日期
-            self.table.setItem(row, 0, QTableWidgetItem(str(rq)))
-            # 序号
-            self.table.setItem(row, 1, QTableWidgetItem(str(xh)))
-            # 收支类型
-            type_text = "收入" if srzc == 'SR' else "支出"
-            type_item = QTableWidgetItem(type_text)
-            if srzc == 'SR':
-                type_item.setForeground(Qt.darkGreen)
-            else:
-                type_item.setForeground(Qt.darkRed)
-            self.table.setItem(row, 2, type_item)
-            # 单据号
-            self.table.setItem(row, 3, QTableWidgetItem(djh))
-            # 收入类型
-            self.table.setItem(row, 4, QTableWidgetItem(sr_code if sr_code else ""))
-            # 收入金额
-            srje_item = QTableWidgetItem(f"¥{srje:.2f}" if srje else "")
-            if srje:
-                srje_item.setForeground(Qt.darkGreen)
-            self.table.setItem(row, 5, srje_item)
-            # 支出类型
-            self.table.setItem(row, 6, QTableWidgetItem(zc_code if zc_code else ""))
-            # 支出金额
-            zcje_item = QTableWidgetItem(f"¥{zcje:.2f}" if zcje else "")
-            if zcje:
-                zcje_item.setForeground(Qt.darkRed)
-            self.table.setItem(row, 7, zcje_item)
-            # 余额
-            ye_item = QTableWidgetItem(f"¥{ye:.2f}" if ye else "¥0.00")
-            ye_item.setForeground(Qt.blue)
-            self.table.setItem(row, 8, ye_item)
-            # 支付方式
-            self.table.setItem(row, 9, QTableWidgetItem(zf_code if zf_code else ""))
-            # 备注
-            self.table.setItem(row, 10, QTableWidgetItem(bz if bz else ""))
-        
+
+        # 批处理：一次设置行数并关闭重绘，避免逐行 insertRow 触发多次重绘
+        self.table.setUpdatesEnabled(False)
+        self.table.blockSignals(True)
+        try:
+            self.table.setRowCount(len(records))
+            for row, record in enumerate(records):
+                # record: (rq, xh, srzc, djh, sr_code, srje, zc_code, zcje, ye, zf_code, bz)
+                rq, xh, srzc, djh, sr_code, srje, zc_code, zcje, ye, zf_code, bz = record
+
+                self.table.setItem(row, 0, QTableWidgetItem(str(rq)))
+                self.table.setItem(row, 1, QTableWidgetItem(str(xh)))
+                type_text = "收入" if srzc == 'SR' else "支出"
+                type_item = QTableWidgetItem(type_text)
+                type_item.setForeground(Qt.darkGreen if srzc == 'SR' else Qt.darkRed)
+                self.table.setItem(row, 2, type_item)
+                self.table.setItem(row, 3, QTableWidgetItem(djh))
+                self.table.setItem(row, 4, QTableWidgetItem(sr_code if sr_code else ""))
+                srje_item = QTableWidgetItem(f"¥{srje:.2f}" if srje else "")
+                if srje:
+                    srje_item.setForeground(Qt.darkGreen)
+                self.table.setItem(row, 5, srje_item)
+                self.table.setItem(row, 6, QTableWidgetItem(zc_code if zc_code else ""))
+                zcje_item = QTableWidgetItem(f"¥{zcje:.2f}" if zcje else "")
+                if zcje:
+                    zcje_item.setForeground(Qt.darkRed)
+                self.table.setItem(row, 7, zcje_item)
+                ye_item = QTableWidgetItem(f"¥{ye:.2f}" if ye else "¥0.00")
+                ye_item.setForeground(Qt.blue)
+                self.table.setItem(row, 8, ye_item)
+                self.table.setItem(row, 9, QTableWidgetItem(zf_code if zf_code else ""))
+                self.table.setItem(row, 10, QTableWidgetItem(bz if bz else ""))
+        finally:
+            self.table.blockSignals(False)
+            self.table.setUpdatesEnabled(True)
+
         print(f"[流水账] 加载完成，共{len(records)}条记录")
     
     def generate_cash_flow(self):

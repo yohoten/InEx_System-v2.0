@@ -9,10 +9,10 @@ class UIStyles:
     """UI样式常量和管理类"""
     
     # ==================== 主题色系 ====================
-    # 主色调
-    PRIMARY = "#667eea"
-    PRIMARY_HOVER = "#5568d3"
-    PRIMARY_LIGHT = "#f0f3ff"
+    # 主色调（与 theme.py 的 light 色板保持一致，避免主题引擎接管前的色彩分裂）
+    PRIMARY = "#6366f1"
+    PRIMARY_HOVER = "#4f46e5"
+    PRIMARY_LIGHT = "#eef2ff"
     
     # 成功色
     SUCCESS = "#10b981"
