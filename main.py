@@ -29,7 +29,6 @@ if sys.platform == 'win32':
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 from PyQt5.QtWidgets import QApplication, QSplashScreen
-from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QFont, QIcon, QPixmap, QPainter, QColor
 from PyQt5.QtCore import QRect
 
@@ -38,6 +37,7 @@ from ui.main_window import MainWindow
 from models.db_backend import db_manager
 from models.config import config
 from utils.logger import log_manager  # 新增:导入日志管理器
+from ui.theme import theme_manager  # 主题引擎
 
 
 def create_splash_screen():
@@ -102,19 +102,14 @@ def main():
         font = QFont("微软雅黑", 10)
         app.setFont(font)
         
-        # 设置应用样式
-        app.setStyleSheet("""
-            QMainWindow {
-                background-color: white;
-            }
-        """)
-        
+        # 应用主题（全局 QSS，支持浅色/深色）
+        saved_theme = config.get('ui.theme', 'light')
+        theme_manager.apply(app, saved_theme)
+
         # 显示启动画面
         splash = create_splash_screen()
         splash.show()
         app.processEvents()
-        # 模拟初始化
-        QTimer.singleShot(800, lambda: None)  #  0.8秒
         # 显示登录对话框
         login_dialog = LoginDialog()
         # 连接登录成功信号

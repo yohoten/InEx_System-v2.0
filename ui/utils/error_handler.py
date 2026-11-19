@@ -174,8 +174,8 @@ def handle_database_error(func):
             elif "table" in error_msg or "column" in error_msg:
                 suggestions = [
                     "检查数据库表结构",
-                    "运行数据库初始化脚本",
-                    "查看data/temp_init_data.sql"
+                    "运行数据库初始化脚本 (tools/regenerate_all.py)",
+                    "源码环境下可参考 data/temp_init_data.sql"
                 ]
             else:
                 suggestions = [

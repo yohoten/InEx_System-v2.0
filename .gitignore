@@ -44,10 +44,12 @@ data/*.sqlite
 data/*.db-shm
 data/*.db-wal
 
-# Backup
+# Backup & generated runtime data
 backup/
 *.bak
 *.backup
+data/temp_init_data.sql
+data/export/*.pdf
 
 # Security - 敏感文件（切勿提交）
 secret.key

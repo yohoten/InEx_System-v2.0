@@ -5,10 +5,24 @@
 """
 
 import os
+import sys
 import json
 import threading
 from datetime import datetime
+from pathlib import Path
 from utils.logger import log_manager  # 新增:导入日志管理器
+
+
+def _project_root() -> Path:
+    """返回项目/打包根目录，兼容源码运行与 PyInstaller 打包。
+
+    - 源码运行：本文件位于 <root>/models/config.py，根目录为上级目录。
+    - PyInstaller onefile/onedir：运行时资源位于 sys._MEIPASS 或 exe 同级目录。
+    """
+    if getattr(sys, 'frozen', False):
+        # 打包后 config.json 通过 --add-data 放在 exe 同级目录
+        return Path(sys.executable).resolve().parent
+    return Path(__file__).resolve().parent.parent
 
 
 class ConfigManager:
@@ -29,7 +43,8 @@ class ConfigManager:
         if self.__initialized:
             return
         
-        self.config_file = 'config.json'
+        self.root_dir = _project_root()
+        self.config_file = str(self.root_dir / 'config.json')
         self.config = {
             'database': {
                 'type': 'sqlite',
@@ -41,11 +56,11 @@ class ConfigManager:
                 'company_name': '收支管理系统',
                 'version': '2.0',
                 'author': '滕宇豪',
-                'student_id': '270457',
+                'student_id': '0457',
                 'class': '大数据与财务管理 03 班'
             },
             'ui': {
-                'theme': 'default',
+                'theme': 'light',
                 'font_size': 10,
                 'window_width': 1600,
                 'window_height': 900

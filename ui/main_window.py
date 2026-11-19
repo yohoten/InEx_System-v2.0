@@ -81,32 +81,6 @@ class MainWindow(QMainWindow):
         # ========== 左侧边栏 ==========
         self.sidebar = QListWidget()
         self.sidebar.setFixedWidth(210)
-        self.sidebar.setStyleSheet(f"""
-            QListWidget {{
-                background-color: {UIStyles.SIDEBAR_BG};
-                color: {UIStyles.SIDEBAR_TEXT};
-                border: none;
-                outline: none;
-                padding: 8px 0;
-            }}
-            QListWidget::item {{
-                height: 48px;
-                padding-left: 16px;
-                margin: 2px 10px;
-                border-radius: 8px;
-                border: none;
-            }}
-            QListWidget::item:selected {{
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                    stop:0 {UIStyles.SIDEBAR_SELECTED}, stop:1 {UIStyles.SIDEBAR_SELECTED_DARKER});
-                color: white;
-                font-weight: bold;
-            }}
-            QListWidget::item:hover:!selected {{
-                background-color: {UIStyles.SIDEBAR_HOVER};
-                border-radius: 8px;
-            }}
-        """)
         self.sidebar.setFont(QFont(UIStyles.FONT_FAMILY, UIStyles.FONT_SIZE_MEDIUM))
 
         # 添加列表项
@@ -130,14 +104,12 @@ class MainWindow(QMainWindow):
 
         # ========== 右侧内容区域 ==========
         content_frame = QFrame()
-        content_frame.setStyleSheet(f"background-color: {UIStyles.CONTENT_BG};")
         content_layout = QVBoxLayout()
         content_layout.setContentsMargins(0, 0, 0, 0)
         content_frame.setLayout(content_layout)
 
         # 堆叠窗口
         self.stacked_widget = QStackedWidget()
-        self.stacked_widget.setStyleSheet(f"background-color: {UIStyles.CONTENT_BG};")
         content_layout.addWidget(self.stacked_widget)
 
         main_layout.addWidget(content_frame)
@@ -151,22 +123,9 @@ class MainWindow(QMainWindow):
         # ========== 状态栏 ==========
         self.status_bar = QStatusBar()
         self.setStatusBar(self.status_bar)
-        self.status_bar.setStyleSheet(f"""
-            QStatusBar {{
-                background-color: {UIStyles.SIDEBAR_BG};
-                color: {UIStyles.TEXT_TERTIARY};
-                border-top: 1px solid {UIStyles.SIDEBAR_ITEM_BORDER};
-                padding: 0 12px;
-                font-size: 9px;
-            }}
-            QStatusBar::item {{
-                border: none;
-            }}
-        """)
 
         # 左侧：数据库状态 + 账套信息
         self.status_db_label = QLabel()
-        self.status_db_label.setStyleSheet(f"color: {UIStyles.TEXT_TERTIARY}; font-size: 9px;")
         self.status_bar.addWidget(self.status_db_label)
 
         # 弹性空间
@@ -176,7 +135,6 @@ class MainWindow(QMainWindow):
 
         # 右侧：当前时间
         self.status_time_label = QLabel()
-        self.status_time_label.setStyleSheet(f"color: {UIStyles.TEXT_TERTIARY}; font-size: 9px;")
         self.status_bar.addPermanentWidget(self.status_time_label)
 
         # 初始化状态栏内容
@@ -187,6 +145,40 @@ class MainWindow(QMainWindow):
         self._status_timer = QTimer(self)
         self._status_timer.timeout.connect(self._update_status_time)
         self._status_timer.start(60000)
+
+        # 应用主题到侧边栏等主题感知区域
+        self._apply_theme_to_chrome()
+
+    def _apply_theme_to_chrome(self):
+        """根据当前主题重绘侧边栏（含渐变选中态）等核心区域。"""
+        from ui.theme import theme_manager
+        p = theme_manager.palette
+        self.sidebar.setStyleSheet(f"""
+            QListWidget {{
+                background-color: {p['sidebar_bg']};
+                color: {p['sidebar_text']};
+                border: none;
+                outline: none;
+                padding: 8px 0;
+            }}
+            QListWidget::item {{
+                height: 48px;
+                padding-left: 16px;
+                margin: 2px 10px;
+                border-radius: 8px;
+                border: none;
+                color: {p['sidebar_text']};
+            }}
+            QListWidget::item:selected {{
+                background-color: {p['sidebar_selected']};
+                color: #ffffff;
+                font-weight: bold;
+            }}
+            QListWidget::item:hover:!selected {{
+                background-color: {p['sidebar_hover']};
+                border-radius: 8px;
+            }}
+        """)
 
     def create_placeholder_pages(self):
         """创建所有页面"""
@@ -434,19 +426,36 @@ class MainWindow(QMainWindow):
         # ========== 视图菜单==========
         view_menu = menubar.addMenu("视图(&V)")
 
-        # 主题切换
+        # 主题切换（互斥）
+        from PyQt5.QtWidgets import QActionGroup
         theme_menu = view_menu.addMenu("🎨 主题(&T)")
+        theme_group = QActionGroup(self)
+        theme_group.setExclusive(True)
 
-        light_theme = QAction("☀️ 浅色", self)
-        light_theme.setCheckable(True)
-        light_theme.setChecked(True)
-        light_theme.triggered.connect(lambda: self.on_menu_action("切换到浅色主题"))
-        theme_menu.addAction(light_theme)
+        self.light_theme_action = QAction("☀️ 浅色", self)
+        self.light_theme_action.setCheckable(True)
+        self.light_theme_action.triggered.connect(lambda: self.on_menu_action("切换到浅色主题"))
+        theme_group.addAction(self.light_theme_action)
+        theme_menu.addAction(self.light_theme_action)
 
-        auto_theme = QAction("🔄 自动", self)
+        self.dark_theme_action = QAction("🌙 深色", self)
+        self.dark_theme_action.setCheckable(True)
+        self.dark_theme_action.triggered.connect(lambda: self.on_menu_action("切换到深色主题"))
+        theme_group.addAction(self.dark_theme_action)
+        theme_menu.addAction(self.dark_theme_action)
+
+        auto_theme = QAction("🔄 跟随系统", self)
         auto_theme.setCheckable(True)
         auto_theme.triggered.connect(lambda: self.on_menu_action("切换到自动主题"))
+        theme_group.addAction(auto_theme)
         theme_menu.addAction(auto_theme)
+
+        # 按配置勾选当前主题
+        current_theme = config.get('ui.theme', 'light')
+        if current_theme == 'dark':
+            self.dark_theme_action.setChecked(True)
+        else:
+            self.light_theme_action.setChecked(True)
 
         view_menu.addSeparator()
 
@@ -1078,16 +1087,28 @@ class MainWindow(QMainWindow):
         dialog.exec_()
 
     def change_theme(self, theme_name):
-        """切换主题"""
-        from PyQt5.QtWidgets import QMessageBox
+        """切换主题（浅色/深色/跟随系统），经主题引擎全局生效并持久化。"""
+        from ui.theme import theme_manager
 
-        if "浅色" in theme_name:
-            self.setStyleSheet("")
-            QMessageBox.information(self, "主题", "已切换到浅色主题")
+        if "深色" in theme_name or "dark" in theme_name.lower():
+            target = "dark"
+            label = "深色"
         elif "自动" in theme_name:
-            QMessageBox.information(self, "主题", "自动主题功能开发中...")
+            # 跟随系统：依据系统浅/深色配色决定
+            app = QApplication.instance()
+            is_dark = False
+            if app is not None:
+                is_dark = app.palette().color(QPalette.Window).lightness() < 128
+            target = "dark" if is_dark else "light"
+            label = f"跟随系统（{target}）"
+        else:
+            target = "light"
+            label = "浅色"
 
-        print(f"[主题] 切换到{theme_name}")
+        theme_manager.set_theme(target)
+        self._apply_theme_to_chrome()
+        from utils.logger import log_manager
+        log_manager.info(f"[主题] 已切换到 {label}")
 
     def change_font_size(self, size_name):
         """改变字体大小"""

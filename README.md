@@ -137,12 +137,12 @@ pip install -r requirements.txt
 python main.py
 ```
 
-或直接双击 **`InEx_System_Launcher.bat`**（自动检测/安装依赖并启动）：
+或直接双击 **`launcher.bat`**（自动检测/安装依赖并启动）：
 
 ```
-InEx_System_Launcher.bat            # 正常启动（含依赖检测）
-InEx_System_Launcher.bat /fast      # 跳过检测直接启动
-InEx_System_Launcher.bat /install   # 仅安装依赖
+launcher.bat            # 正常启动（含依赖检测）
+launcher.bat /fast      # 跳过检测直接启动
+launcher.bat /install   # 仅安装依赖
 ```
 
 ### 默认账套
@@ -174,7 +174,7 @@ InEx_System v2.0_26041800/
 ├── config.json                  # 系统配置（数据库/UI/日志/AI 加密存储）
 ├── requirements.txt             # 依赖清单
 ├── build.py                     # PyInstaller 打包脚本
-├── InEx_System_Launcher.bat     # 一键启动脚本
+├── launcher.bat                 # 一键启动脚本
 ├── InEx_System_v2.0.spec        # PyInstaller 配置
 ├── InEx_System_v2.0_installer.iss  # Inno Setup 安装脚本
 ├── InEx_System.ico              # 应用图标
@@ -198,7 +198,8 @@ InEx_System v2.0_26041800/
 │   │   ├── profile_page.py      #     个人中心
 │   │   └── settings_page.py     #     系统设置
 │   ├── dialogs/                 #   对话框（数据库连接/管理/全局搜索）
-│   └── styles.py                #   样式常量
+│   ├── theme.py                 #   主题引擎（浅色/深色双主题 + 全局 QSS）
+│   └── styles.py                #   样式常量与工厂方法
 ├── utils/                       # 工具层（MVC 的 C）
 │   ├── auth_manager.py          #   认证（bcrypt + Fernet）
 │   ├── ai_assistant.py          #   DeepSeek AI 助手
@@ -236,7 +237,7 @@ InEx_System v2.0_26041800/
 ## ❓ 常见问题
 
 **Q1：启动提示缺少依赖？**
-双击 `InEx_System_Launcher.bat` 会自动安装；或手动执行 `pip install -r requirements.txt`。
+双击 `launcher.bat` 会自动安装；或手动执行 `pip install -r requirements.txt`。
 
 **Q2：如何切换数据库？**
 进入「系统设置 → 数据库配置」，选择 SQLite / MySQL / Sybase 并填写连接参数；Sybase 支持 DSN、DSN-less、文件直连三种方式，首次使用可参考应用内驱动安装指南。
@@ -251,6 +252,18 @@ InEx_System v2.0_26041800/
 默认 `data/inex.db`；自动备份在 `data/backup/`，导出报告在 `data/export/`。
 
 ---
+
+## 🔧 工程优化说明（2026-11 改造）
+
+本版本在保持功能不变的前提下，完成以下工程化改造：
+
+- **路径可移植**：所有数据库/构建路径改为相对路径（基于 `__file__` 或 `sys.executable`），不再绑定特定盘符；数据库默认 `data/inex.db`。
+- **主题系统**：新增 `ui/theme.py` 主题引擎，提供浅色/深色双主题（菜单「视图 → 主题」切换），选择持久化到 `config.json` 的 `ui.theme`。全局 QSS 统一控件外观；页面内的彩色卡片样式仍保留各自设计。
+- **目录规范**：一次性脚本迁移至 `tools/`；`secret.key`/`connection.key` 等敏感文件与数据库保持在版本库之外（`.gitignore` 已配置）。
+- **打包瘦身**：`spec`/`build.py` 排除了未使用的 Qt 模块（Quick/Qml/Multimedia/Network 等）、PIL AVIF、测试模块；不再打包 `data/backup`、`data/export`、`temp_init_data.sql`；打包后自动移除 `opengl32sw.dll`（约 5 MB）。预计体积由约 84 MB 降至 55–65 MB。
+- **安全与可维护**：`config.json` 中的明文数据库密码已清空；日志级别默认 `INFO`；移除启动时的 800ms 空转与 BOM 字符；导入未落地功能改为诚实的"解析预览"提示。
+
+> 回滚基线：Git 标签 `pre-optimization-baseline`（改造分支 `refactor/optimization`）。
 
 ## 📜 许可
 

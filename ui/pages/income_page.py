@@ -1021,12 +1021,13 @@ class IncomePage(QWidget):
                     data = excel_handler.get_all_data(min_row=2)
                     
                     print(f"[收入管理] 读取 Excel：{len(data)}条记录")
-                    
-                    # TODO: 解析数据并添加到数据库
+
+                    # BACKLOG: Excel 批量入库需映射类型/支付方式码表、生成 djh 单据号并
+                    # 联动重建流水账(sz_table_lsz)与月报表。当前仅解析预览，不写库。
                     QMessageBox.information(
-                        self, 
-                        "导入成功", 
-                        f"成功读取 {len(data)} 条记录\n数据添加功能待开发"
+                        self,
+                        "解析预览",
+                        f"已读取 {len(data)} 条记录。\n批量入库功能规划中，当前版本不会写入数据库。"
                     )
                 except Exception as e:
                     QMessageBox.critical(
@@ -1054,8 +1055,8 @@ class IncomePage(QWidget):
                     
                     QMessageBox.information(
                         self,
-                        "导入成功",
-                        f"成功导入 {len(records)} 条有效记录\n数据添加功能待开发"
+                        "解析预览",
+                        f"已解析 {len(records)} 条有效记录。\n批量入库功能规划中，当前版本不会写入数据库。"
                     )
                 except Exception as e:
                     QMessageBox.critical(

@@ -1,7 +1,7 @@
 {
   "database": {
     "type": "sqlite",
-    "path": "D:/InEx_System_Item/InEx_System v2.0_26041800/data/inex.db",
+    "path": "data/inex.db",
     "auto_backup": true,
     "backup_interval": 1,
     "active_connection": null,
@@ -9,8 +9,8 @@
     "backup_path": "./backup/",
     "host": "localhost",
     "port": "3306",
-    "user": "dba",
-    "password": "sql",
+    "user": "",
+    "password": "",
     "database": ""
   },
   "system": {
@@ -21,7 +21,7 @@
     "class": "大数据与财务管理 03 班"
   },
   "ui": {
-    "theme": "default",
+    "theme": "light",
     "font_size": 10,
     "window_width": 1600,
     "window_height": 900,
@@ -31,7 +31,7 @@
     "last_income_type": "全部"
   },
   "log": {
-    "level": "ERROR",
+    "level": "INFO",
     "path": "./logs/"
   },
   "api": {},

@@ -8,7 +8,7 @@ InEx System v2.0 — 打包脚本
 
 依赖:
     - PyInstaller >= 5.0 (pip install pyinstaller)
-    - UPX (可选，自动检测 H:/UPX/upx.exe)
+    - UPX (可选，自动从 PATH 或 tools/ 目录检测，可用 UPX_DIR 指定)
     - Inno Setup 6+ (可选，仅 --installer 模式需要)
 """
 
@@ -44,18 +44,23 @@ OUTPUT_EXE = OUTPUT_EXE_DIR / f"{PROJECT_NAME_SAFE}.exe"
 ISS_OUTPUT = PROJECT_ROOT / f"{PROJECT_NAME_SAFE}_installer.iss"
 
 # ── UPX ─────────────────────────────────────────────────
-UPX_PATHS = [
-    Path("H:/UPX/upx.exe"),
-    Path("D:/upx/upx.exe"),
-    Path("C:/upx/upx.exe"),
-]
-
-
 def find_upx():
-    for p in UPX_PATHS:
+    """按优先级查找 UPX：PATH → 项目内 tools/upx → 常见环境变量目录。
+
+    不再硬编码盘符，避免换机后失效。可通过 UPX_DIR 环境变量指定目录。
+    """
+    found = shutil.which("upx")
+    if found:
+        return found
+    candidates = []
+    env_dir = os.environ.get("UPX_DIR")
+    if env_dir:
+        candidates.append(Path(env_dir) / "upx.exe")
+    candidates.append(PROJECT_ROOT / "tools" / "upx.exe")
+    for p in candidates:
         if p.is_file():
             return str(p)
-    return shutil.which("upx") or ""
+    return ""
 
 
 UPX = find_upx()
@@ -163,15 +168,26 @@ HIDDEN_IMPORTS = [
 EXCLUDES = [
     "tkinter", "wx", "test", "tests", "pytest",
     "IPython", "jupyter", "notebook",
+    # 未使用的 Qt 模块（源码无 QtQuick/Qml/Multimedia/Network 引用）
+    "PyQt5.QtQuick", "PyQt5.QtQml", "PyQt5.QtMultimedia", "PyQt5.QtMultimediaWidgets",
+    "PyQt5.QtNetwork", "PyQt5.QtBluetooth", "PyQt5.QtPositioning", "PyQt5.QtNfc",
+    "PyQt5.QtSensors", "PyQt5.QtSerialPort", "PyQt5.QtSql", "PyQt5.QtTest",
+    "PyQt5.QtWebEngineWidgets", "PyQt5.QtWebEngineCore", "PyQt5.QtXml",
+    "PyQt5.QtXmlPatterns", "PyQt5.QtDesigner", "PyQt5.QtHelp", "PyQt5.QtOpenGL",
+    "PyQt5.QtScript", "PyQt5.QtSvg", "PyQt5.QtWebKit",
+    # matplotlib 未使用的后端
     "matplotlib.backends.backend_gtk3agg", "matplotlib.backends.backend_tkagg",
+    "matplotlib.backends.backend_pdf", "matplotlib.backends.backend_svg",
+    # 测试与开发模块
     "numpy.core.tests", "numpy.lib.tests", "numpy.f2py",
-    "scipy.tests",
+    "scipy.tests", "pandas.tests", "PIL.ImageQt",
 ]
 
 DATA_FILES = [
     ("config.json", "."),
     ("InEx_System.ico", "."),
-    ("data", "data"),
+    # 仅打包必需的数据库，排除 data/backup、data/export、temp_init_data.sql 以减小体积
+    ("data/inex.db", "data"),
 ]
 for kf in ["secret.key", "connection.key"]:
     if (PROJECT_ROOT / kf).exists():
@@ -220,6 +236,19 @@ def build_exe():
 
     secho("执行 PyInstaller (需 2-4 分钟)...", "info")
     run(cmd, "PyInstaller")
+
+    # 打包后瘦身：移除可选的软件 OpenGL 回退库（约 5 MB）
+    # 仅在无 GPU 的极老旧环境才需要；移除后由系统 OpenGL 驱动提供加速。
+    opengl_sw = OUTPUT_EXE_DIR / "_internal" / "PyQt5" / "Qt5" / "bin" / "opengl32sw.dll"
+    if not opengl_sw.exists():
+        opengl_sw = OUTPUT_EXE_DIR / "PyQt5" / "Qt5" / "bin" / "opengl32sw.dll"
+    if opengl_sw.is_file():
+        try:
+            freed = opengl_sw.stat().st_size / (1024 * 1024)
+            opengl_sw.unlink()
+            secho(f"已移除 opengl32sw.dll，节省 {freed:.1f} MB", "ok")
+        except OSError as e:
+            secho(f"无法移除 opengl32sw.dll: {e}", "warn")
 
     # 创建启动脚本
     bat = OUTPUT_EXE_DIR / "启动应用.bat"
@@ -273,7 +302,7 @@ AppId={{{{{{#MyAppId}}}}}}
 AppName={{#MyAppName}}
 AppVersion={{#MyAppVersion}}
 AppPublisher={{#MyAppPublisher}}
-DefaultDirName={{pf}}\{{#MyAppName}}
+DefaultDirName={{pf}}\\{{#MyAppName}}
 DefaultGroupName={{#MyAppName}}
 AllowNoIcons=yes
 OutputDir=dist
@@ -282,7 +311,7 @@ Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern
 SetupIconFile=InEx_System.ico
-UninstallDisplayIcon={{app}}\{PROJECT_NAME_SAFE}.exe
+UninstallDisplayIcon={{app}}\\{PROJECT_NAME_SAFE}.exe
 PrivilegesRequiredOverridesAllowed=commandline dialog
 ArchitecturesInstallIn64BitMode=x64compatible
 
